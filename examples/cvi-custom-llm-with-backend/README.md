@@ -54,7 +54,7 @@ This is meant to show that you can do anything in the LLM layer (not just callin
    ```
    Here you're actually receiving this exact format from us, thus parsing this body is standardized. If you don't disable the VQA layer during Persona creation, you'll get our system prompt that incorporates visual data into the prompt.
    
-   **Note that if you have your backend that serves requests at `http://localhost:5000/chat/completions`, your base_url when specifying the LLM layer should be `http://localhost:5000`!**
+   **Note that if you have your backend that serves requests at `http://localhost:5000/chat/completions`, your endpoint when specifying the LLM layer should be `http://localhost:5000`!**
 
 3. The API will respond with a streaming completion that includes the current ISS location. If you respond to us via streaming when designing your backend, we can stream out the response and drastically improve the overall conversation experience.
 
