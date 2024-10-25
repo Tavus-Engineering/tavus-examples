@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  height: 100vh;
+  background-color: rgb(248, 250, 252);
+  padding: 2rem;
+  color: rgb(9, 9, 11);
+}
+
+button,
+div,
+input {
+  box-sizing: border-box;
+}
