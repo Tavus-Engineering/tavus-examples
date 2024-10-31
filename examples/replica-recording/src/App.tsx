@@ -713,7 +713,7 @@ export const ReplicaRecording: React.FC<ReplicaRecordingProps> = ({
         onStart={handleStart}
         onStop={stopRecording}
         onCancel={cancelRecording}
-        isDisabled={isLowResolution}
+        isDisabled={isLowResolution || !!countdownValue}
         recordingTime={recordingTime}
         minimumRecordTime={minimumRecordTime}
       />
