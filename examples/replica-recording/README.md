@@ -6,6 +6,10 @@ This app demonstrates how to:
 - Record video using your webcam
 - Select media devices
 
+## 🎮 Preview
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/Tavus-Engineering/tavus-examples/tree/main/examples/replica-recording?file=src%2FApp.tsx)
+
 ## 🛠 Getting Started
 
 1. Install dependencies:
