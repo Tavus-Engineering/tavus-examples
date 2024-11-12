@@ -1,5 +1,7 @@
 # Quick startup guide
 
+This example demonstrates how to use Tavus with a frontend and backend. You can use LLM tools to add products to your cart, checkout, and more, all while integrating this with your frontend.
+
 ## Setup
 
 ```bash
