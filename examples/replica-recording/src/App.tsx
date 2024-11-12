@@ -306,27 +306,27 @@ const RecordingControls: React.FC<{
   recordingTime,
   minimumRecordTime,
 }) => (
-  <div style={{ marginTop: "1rem" }}>
-    {!isRecording ? (
-      <button type="button" onClick={onStart} disabled={isDisabled}>
-        Start Recording
-      </button>
-    ) : (
-      <>
-        <button type="button" onClick={onCancel}>
-          Cancel Recording
+    <div style={{ marginTop: "1rem" }}>
+      {!isRecording ? (
+        <button type="button" onClick={onStart} disabled={isDisabled}>
+          Start Recording
         </button>
-        <button
-          type="button"
-          onClick={onStop}
-          disabled={recordingTime < minimumRecordTime}
-        >
-          Stop Recording
-        </button>
-      </>
-    )}
-  </div>
-);
+      ) : (
+        <>
+          <button type="button" onClick={onCancel}>
+            Cancel Recording
+          </button>
+          <button
+            type="button"
+            onClick={onStop}
+            disabled={recordingTime < minimumRecordTime}
+          >
+            Stop Recording
+          </button>
+        </>
+      )}
+    </div>
+  );
 
 /**
  * Attempts to find the best supported resolution for the given video device.
@@ -551,6 +551,10 @@ const useMediaStream = ({
       // Prepare video constraints
       const videoConstraints: MediaTrackConstraints = {
         deviceId: { exact: selectedVideoDevice!.deviceId },
+        // The minimum FPS for replica recording is 24, so we set the ideal to 25 to get the closest match
+        // this param set fps depending on the browser and webcam settings
+        // with this setup, the MacBook Pro M2 Pro records at 30 fps
+        frameRate: { ideal: 25 },
       };
 
       if (bestResolution) {
