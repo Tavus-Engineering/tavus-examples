@@ -1,0 +1,18 @@
+{
+  "name": "conversation-api",
+  "version": "1.0.0",
+  "description": "API for managing conversations",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

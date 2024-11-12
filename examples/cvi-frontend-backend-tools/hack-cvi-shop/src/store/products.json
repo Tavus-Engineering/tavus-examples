@@ -1,0 +1,491 @@
+[
+  {
+    "id": 1,
+    "name": "White T-Shirt",
+    "price": 98.54,
+    "category": "Clothing",
+    "amount": 13,
+    "description": "Comfortable cotton t-shirt with a classic fit.",
+    "rating": 8,
+    "image": "https://cdn.clothingshoponline.com/Images/Color/41010_f_fm.jpg"
+  },
+  {
+    "id": 2,
+    "name": "White Jeans",
+    "price": 44.86,
+    "category": "Clothing",
+    "amount": 40,
+    "description": "Durable denim jeans with a straight leg cut.",
+    "rating": 7,
+    "image": "https://img.hollisterco.com/is/image/anf/KIC_331-2004-2717-177_prod1?policy=product-large"
+  },
+  {
+    "id": 3,
+    "name": "Lightweight running sneakers",
+    "price": 59.64,
+    "category": "Clothing",
+    "amount": 19,
+    "description": "Lightweight running sneakers with cushioned soles.",
+    "rating": 9,
+    "image": "https://cdn11.bigcommerce.com/s-3e1dc/images/stencil/1280x1280/products/896/5399/On-Cloudgo-Womens-Lightweight-Running-Shoes-On-Track-Field-Inc_3956__16732.1684556416.jpg?c=2?imbypass=on"
+  },
+  {
+    "id": 4,
+    "name": "CasioAnalog watch",
+    "price": 89,
+    "category": "Accessories",
+    "amount": 20,
+    "description": "Stylish Casio analog watch with a leather strap.",
+    "rating": 8,
+    "image": "https://i5.walmartimages.com/seo/Casio-Men-s-Classic-Analog-Stainless-Steel-Watch-Silver-MQ24D-7E_89f91a54-3c20-4ba7-b959-0f1de2fa2e19.4f57b0c15238622a31398975655c2db0.jpeg"
+  },
+  {
+    "id": 5,
+    "name": "Leather backpack",
+    "price": 102.57,
+    "category": "Clothing",
+    "amount": 46,
+    "description": "Spacious backpack with multiple compartments.",
+    "rating": 9,
+    "image": "https://m.media-amazon.com/images/I/711RRJChNmS._AC_UY1000_.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Razer Blade Gaming Laptop",
+    "price": 23.99,
+    "category": "Electronics",
+    "amount": 14,
+    "description": "Powerful laptop with a high-resolution display for gaming and work with Nvidia GeForce RTX 3060Ti.",
+    "rating": 10,
+    "image": "https://m.media-amazon.com/images/I/81sX1nwD+fL._AC_UF894,1000_QL80_.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Generic Samsung Galaxy S10",
+    "price": 104.21,
+    "category": "Electronics",
+    "amount": 31,
+    "description": "Feature-rich smartphone with a long-lasting battery and 128GB of storage and Super display.",
+    "rating": 9,
+    "image": "https://m.media-amazon.com/images/I/51DP0FkoEAL._AC_UF350,350_QL80_.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Pink headphones",
+    "price": 107.81,
+    "category": "Electronics",
+    "amount": 6,
+    "description": "Noise-cancelling headphones with superior sound quality.",
+    "rating": 10,
+    "image": "https://www.belkin.com/on/demandware.static/-/Sites-master-product-catalog-blk/default/dwbfe69cf3/images/hi-res/2/2ddf1428570dc45a_AUD004_PK_Belkin_SoundformMini_Wired_(SAP157)_Web_01.png"
+  },
+  {
+    "id": 9,
+    "name": "Ipad",
+    "price": 91.49,
+    "category": "Electronics",
+    "amount": 46,
+    "description": "Versatile tablet with a responsive touchscreen.",
+    "rating": 8,
+    "image": "https://m.media-amazon.com/images/I/51dBcW+NXPL._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "id": 10,
+    "name": "Compact digital camera",
+    "price": 22.27,
+    "category": "Electronics",
+    "amount": 41,
+    "description": "High-resolution digital camera with multiple shooting modes.",
+    "rating": 9,
+    "image": "https://m.media-amazon.com/images/I/71Kj+x1pNyL.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Blue T-Shirt",
+    "price": 90.46,
+    "category": "Clothing",
+    "amount": 31,
+    "description": "Soft, breathable t-shirt perfect for everyday wear.",
+    "rating": 7,
+    "image": "https://www.bulkapparel.com/image/alpha-colors/fashion-wear/g200_77.jpg"
+  },
+  {
+    "id": 12,
+    "name": "High-waisted jeans",
+    "price": 71.57,
+    "category": "Clothing",
+    "amount": 2,
+    "description": "Stylish skinny jeans with a comfortable stretch.",
+    "rating": 8,
+    "image": "https://images.express.com/is/image/expressfashion/0091_07021458_0018_f001?cache=on&wid=480&fmt=jpeg&qlt=85,1&resmode=sharp2&op_usm=1,1,5,0&defaultImage=Photo-Coming-Soon"
+  },
+  {
+    "id": 13,
+    "name": "Alpine Swiss Brad Mens Dress Sneakers",
+    "price": 35.36,
+    "category": "Clothing",
+    "amount": 37,
+    "description": "Alpine Swiss Brad Mens Dress Sneakers with a trendy design.",
+    "rating": 7,
+    "image": "https://cdn11.bigcommerce.com/s-luvww1semp/images/stencil/1280x1280/products/2364/15707/brad-blk%20(1)__13896.1715631132.jpg?c=2"
+  },
+  {
+    "id": 14,
+    "name": "Samsung smartwatch",
+    "price": 77.89,
+    "category": "Electronics",
+    "amount": 36,
+    "description": "Smart watch with fitness tracking capabilities.",
+    "rating": 9,
+    "image": "https://m.media-amazon.com/images/I/81UQDoHG7pL.jpg"
+  },
+  {
+    "id": 15,
+    "name": "Rolling backpack",
+    "price": 39.87,
+    "category": "Clothing",
+    "amount": 16,
+    "description": "Durable backpack with water-resistant material.",
+    "rating": 8,
+    "image": "https://shop.highsierra.com/dw/image/v2/BBZB_PRD/on/demandware.static/-/Sites-product-catalog/default/dwa0af4674/collections/_highsierra/Backpacks/500x500/PROD_COL_138585_1041_FRONT34.jpg?sw=3000&sh=3000"
+  },
+  {
+    "id": 16,
+    "name": "Dell laptop",
+    "price": 22.52,
+    "category": "Electronics",
+    "amount": 48,
+    "description": "Lightweight laptop ideal for work and travel.",
+    "rating": 8,
+    "image": "https://i5.walmartimages.com/seo/HP-Chromebook-14a-na0000-14a-na0200nr-14-HD-1366-x-768-Intel-Celeron-N4120-Quad-core-4-Core-4-GB-Total-RAM-On-board-Memory-64-Flash-Mineral-Silver-Na_1685b18a-d6de-409f-a332-dfbea8e4d04c.f8ecc72b09ca043a4e0f4045096e6256.jpeg?odnHeight=2000&odnWidth=2000&odnBg=FFFFFF"
+  },
+  {
+    "id": 17,
+    "name": "Sony smartphone",
+    "price": 108.92,
+    "category": "Electronics",
+    "amount": 35,
+    "description": "Advanced smartphone with a high-quality camera.",
+    "rating": 9,
+    "image": "https://d1ncau8tqf99kp.cloudfront.net/converted/113694_original_local_1200x1050_v3_converted.webp"
+  },
+  {
+    "id": 18,
+    "name": "Airpods",
+    "price": 65.78,
+    "category": "Clothing",
+    "amount": 42,
+    "description": "Wireless headphones with long battery life.",
+    "rating": 8,
+    "image": "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-4-hero-select-202409_FMT_WHH?wid=752&hei=636&fmt=jpeg&qlt=90&.v=1725502960389"
+  },
+  {
+    "id": 19,
+    "name": "Samsung Galaxy Tab 2 tablet",
+    "price": 100.29,
+    "category": "Beauty",
+    "amount": 21,
+    "description": "Samsung Galaxy Tab,Compact tablet with a vibrant display.",
+    "rating": 7,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Samsung_Galaxy_Tab_2_10.1-2175.jpg"
+  },
+  {
+    "id": 20,
+    "name": "Canon EOS 6D Mark II DSLR Camera",
+    "price": 84.28,
+    "category": "Electronics",
+    "amount": 33,
+    "description": "Compact digital camera with 4K video capability.",
+    "rating": 8,
+    "image": "https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/canon_eos_6d_mark_ii_1561852319_1346735.jpg"
+  },
+  {
+    "id": 21,
+    "name": "Yellow T-Shirt",
+    "price": 73.86,
+    "category": "Clothing",
+    "amount": 36,
+    "description": "Stylish graphic t-shirt with a unique design.",
+    "rating": 7,
+    "image": "https://cdn.rushordertees.com/design/ZoomImage.php?src=5521363_f&style=RT2000&colorCode=YLW&x=240&y=300&width=880&height=880&scale=1.7&watermark=false&autoInvertDesign=true"
+  },
+  {
+    "id": 22,
+    "name": "Levi's 501 Straight in Blue Jeans",
+    "price": 39.35,
+    "category": "Clothing",
+    "amount": 33,
+    "description": "Levi's 501 Straight in Blue Jeans, Comfortable bootcut jeans with a classic wash.",
+    "rating": 8,
+    "image": "https://lsco.scene7.com/is/image/lsco/125010508-alt1-pdp-ld?fmt=jpeg&qlt=70&resMode=sharp2&fit=crop,1&op_usm=0.6,0.6,8&wid=2000&hei=1840"
+  },
+  {
+    "id": 23,
+    "name": "Vans Unisex Sneakers",
+    "price": 10.54,
+    "category": "Shoes",
+    "amount": 45,
+    "description": "Vans Unisex Casual Shoe, High-top sneakers with a retro-inspired look.",
+    "rating": 7,
+    "image": "https://m.media-amazon.com/images/I/616cp4I4SCL._AC_UY900_.jpg"
+  },
+  {
+    "id": 24,
+    "name": "Fancy watch",
+    "price": 48.46,
+    "category": "Beauty",
+    "amount": 41,
+    "description": "Elegant dress watch with a minimalist design.",
+    "rating": 8,
+    "image": "https://fossil.scene7.com/is/image/FossilPartners/BQ2363_main?$sfcc_fos_large$"
+  },
+  {
+    "id": 26,
+    "name": "Surface Laptop",
+    "price": 74.56,
+    "category": "Beauty",
+    "amount": 39,
+    "description": "Gaming laptop with high-performance graphics.",
+    "rating": 10,
+    "image": "https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RW1geGK?ver=b6bc&q=90&m=6&h=270&w=270&b=%23FFFFFFFF&f=jpg&o=f&aim=true"
+  },
+  {
+    "id": 28,
+    "name": "Orange airpods max",
+    "price": 22.32,
+    "category": "Electronics",
+    "amount": 22,
+    "description": "In-ear headphones with active noise cancellation.",
+    "rating": 8,
+    "image": "https://target.scene7.com/is/image/Target/GUEST_c1da93aa-063c-439d-8186-7c6dd301fd76?wid=1200&hei=1200&qlt=80&fmt=webp"
+  },
+  {
+    "id": 34,
+    "name": "Apple watch",
+    "price": 57.41,
+    "category": "Clothing",
+    "amount": 50,
+    "description": "Sporty digital watch with multiple timers.",
+    "rating": 8,
+    "image": "https://www.att.com/scmsassets/global/devices/other/apple/apple-watch-ultra-2-49mm/defaultimage/titanium-blue-ocean-band-hero-zoom.png"
+  },
+  {
+    "id": 37,
+    "name": "Iphone",
+    "price": 42.17,
+    "category": "Electronics",
+    "amount": 46,
+    "description": "Budget-friendly smartphone with dual cameras.",
+    "rating": 7,
+    "image": "https://m.media-amazon.com/images/I/61p1I5f5ApL.jpg"
+  },
+  {
+    "id": 38,
+    "name": "Bose headphones",
+    "price": 105.61,
+    "category": "Home",
+    "amount": 18,
+    "description": "Over-ear headphones with studio-quality sound.",
+    "rating": 9,
+    "image": "https://i5.walmartimages.com/seo/Bose-QuietComfort-Ultra-Wireless-Noise-Cancelling-Bluetooth-Headphones-Black_4a17732c-c548-4d96-af9c-ebb490efd56b.24ccd50051e17a63c1b4ed144ba13956.jpeg"
+  },
+  {
+    "id": 39,
+    "name": "Google tablet",
+    "price": 28.31,
+    "category": "Electronics",
+    "amount": 36,
+    "description": "Kid-friendly tablet with parental controls.",
+    "rating": 7,
+    "image": "https://m.media-amazon.com/images/I/71YZxO0GBSL.jpg"
+  },
+  {
+    "id": 40,
+    "name": "Canon camera",
+    "price": 17.04,
+    "category": "Electronics",
+    "amount": 23,
+    "description": "Instant camera for quick, fun photos.",
+    "rating": 7,
+    "image": "https://m.media-amazon.com/images/I/71DAisfNTKL._AC_UF894,1000_QL80_.jpg"
+  },
+  {
+    "id": 41,
+    "name": "Vintage t-shirt",
+    "price": 62.97,
+    "category": "Clothing",
+    "amount": 4,
+    "description": "Vintage-style t-shirt with a faded print.",
+    "rating": 7,
+    "image": "https://m.media-amazon.com/images/I/81zrsy6Xl-L._AC_UY350_.jpg"
+  },
+  {
+    "id": 42,
+    "name": "Distressed jeans",
+    "price": 108.35,
+    "category": "Clothing",
+    "amount": 31,
+    "description": "Distressed jeans with a relaxed fit.",
+    "rating": 8,
+    "image": "https://i5.walmartimages.com/seo/CenturyX-Men-s-Skinny-Distressed-Ripped-Jeans-Destroyed-Stretchy-Knee-Holes-Slim-Tapered-Leg-Jeans-Light-Blue-L_e3498edd-0cc4-4171-975a-7ef6c65c9e51.81c654a015b81b927a575fbf38d10f0a.jpeg"
+  },
+  {
+    "id": 43,
+    "name": "Navy Sneakers",
+    "price": 32.42,
+    "category": "Shoes",
+    "amount": 44,
+    "description": "Colorful sneakers with memory foam insoles.",
+    "rating": 8,
+    "image": "https://cdn.allbirds.com/image/fetch/q_auto,f_auto/w_1776,f_auto,q_auto/https://www.allbirds.com/cdn/shop/products/AB0098M_SHOE_ANGLE_GLOBAL_MENS_WOOL_RUNNER_HAZY_INDIGO_BLIZZARD_871e0a1b-ef75-4ef2-817e-eb38873b8618.png?v=1701809165"
+  },
+  {
+    "id": 44,
+    "name": "Luxury watch",
+    "price": 108.43,
+    "category": "Accessories",
+    "amount": 39,
+    "description": "Luxury watch with a sapphire crystal face.",
+    "rating": 10,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMptcpa72yowtEIlSR5yhXGD_YlLZxZ-Yu7w&s"
+  },
+  {
+    "id": 46,
+    "name": "Macbook Pro",
+    "price": 46.21,
+    "category": "Electronics",
+    "amount": 22,
+    "description": "Macbook Pro",
+    "rating": 9,
+    "image": "https://media.cnn.com/api/v1/images/stellar/prod/211025072623-macbook-pro-14-display-5.jpg?q=x_0,y_0,h_2268,w_4030,c_fill"
+  },
+  {
+    "id": 47,
+    "name": "Android phone",
+    "price": 99.91,
+    "category": "Accessories",
+    "amount": 1,
+    "description": "Rugged smartphone for outdoor enthusiasts.",
+    "rating": 8,
+    "image": "data:image/jpeg;base64,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"
+  },
+  {
+    "id": 53,
+    "name": "Green shoes",
+    "price": 76.5,
+    "category": "Shoes",
+    "amount": 19,
+    "description": "Basketball sneakers with superior ankle support.",
+    "rating": 9,
+    "image": "https://cdnimg.vivaia.com/vivaia/products/1685617951-b83d7762-bccb-46eb-9cd1-35cb5c1f5fb7.jpg?imresize=800x800"
+  },
+  {
+    "id": 56,
+    "name": "Macbook Air",
+    "price": 67.99,
+    "category": "Electronics",
+    "amount": 7,
+    "description": "Macbook Air",
+    "rating": 7,
+    "image": "https://m.media-amazon.com/images/I/71N+DK0pEaL._AC_UF894,1000_QL80_.jpg"
+  },
+  {
+    "id": 62,
+    "name": "Blue Jeans",
+    "price": 42,
+    "category": "Clothing",
+    "amount": 8,
+    "description": "Cargo jeans with multiple pockets.",
+    "rating": 7,
+    "image": "https://m.media-amazon.com/images/I/51KzAmXWNWL._AC_SX679_.jpg"
+  },
+  {
+    "id": 63,
+    "name": "Sneakers",
+    "price": 16.58,
+    "category": "Shoes",
+    "amount": 27,
+    "description": "Minimalist sneakers for a sleek look.",
+    "rating": 7,
+    "image": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRr8T0meByB2UTPi4eBFnivVgKDya0ZW6hRTOdyxsENvSsDh2RRFOqr9z3AWQS6mv9uUuTvQGiYFKy4pXyPoqbP-InxyjZ18wtdHwADR4n0TyhN_G4VyDIpGw"
+  },
+  {
+    "id": 65,
+    "name": "Gray Backpack",
+    "price": 34.59,
+    "category": "Accessories",
+    "amount": 16,
+    "description": "Rolling backpack for easy transport.",
+    "rating": 8,
+    "image": "https://m.media-amazon.com/images/I/81OFxhFWmML._AC_UY1000_.jpg"
+  },
+  {
+    "id": 66,
+    "name": "Chromebook",
+    "price": 27,
+    "category": "Electronics",
+    "amount": 41,
+    "description": "Rugged laptop for industrial environments.",
+    "rating": 9,
+    "image": "https://m.media-amazon.com/images/I/71WtvRYq-bL.jpg"
+  },
+  {
+    "id": 72,
+    "name": "Black Jeans",
+    "price": 92.57,
+    "category": "Clothing",
+    "amount": 21,
+    "description": "Thermal-lined jeans for cold weather.",
+    "rating": 8,
+    "image": "https://cherryla.com/cdn/shop/products/BlackJeanBack.jpg?v=1680865591"
+  },
+  {
+    "id": 75,
+    "name": "Colorful Backpack",
+    "price": 89.82,
+    "category": "Beauty",
+    "amount": 37,
+    "description": "Insulated backpack cooler for outdoor events.",
+    "rating": 8,
+    "image": "https://topodesigns.com/cdn/shop/files/S24-U-Rover-Pack-Classic-Recycled-SeaPineMustard-932112367-Quarter-1.jpg?v=1717782444&width=493"
+  },
+  {
+    "id": 85,
+    "name": "Blue suitcase",
+    "price": 69.31,
+    "category": "Beauty",
+    "amount": 1,
+    "description": "Solar-powered backpack with built-in charger.",
+    "rating": 9,
+    "image": "https://assets.awaytravel.com/spree/products/46436/original/f80eaf7e-d098-4d20-be0d-4752ee0071f0.jpg?format=webp&quality=75&width=1200"
+  },
+  {
+    "id": 95,
+    "name": "Pink suitcases",
+    "price": 55.67,
+    "category": "Clothing",
+    "amount": 5,
+    "description": "Shape-shifting backpack that adapts to its contents.",
+    "rating": 9,
+    "image": "https://m.media-amazon.com/images/I/61GpzJF1c6L._AC_UY1000_.jpg"
+  },
+  {
+    "id": 98,
+    "name": "Black headphones",
+    "price": 64.7,
+    "category": "Clothing",
+    "amount": 16,
+    "description": "Neural interface headphones for direct audio input.",
+    "rating": 10,
+    "image": "https://m.media-amazon.com/images/I/71St1R5DFGL.jpg"
+  },
+  {
+    "id": 100,
+    "name": "Camera 10",
+    "price": 72.9,
+    "category": "Home",
+    "amount": 43,
+    "description": "Time-lapse camera with built-in intervalometer.",
+    "rating": 9
+  }
+]
