@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CVI transparent background</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <div id="loader"
+    style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; background-color: #f0f0f0;">
+    <p style="font-size: 18px; margin-bottom: 10px;">Loading and setting up application...</p>
+  </div>
+  <script>
+    window.addEventListener('load', function () {
+      document.getElementById('loader').style.display = 'none';
+    });
+  </script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
