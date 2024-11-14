@@ -12,6 +12,7 @@ This repository is packed with resources that demonstrate how you can build imme
 ## 💻 Examples
 
 - [CVI Quickstart React](./examples/cvi-quickstart-react)
+- [CVI Transparent Background](./examples/cvi-transparent-background)
 - [Replica Recording](./examples/replica-recording)
 
 ## 📚 Learn More
