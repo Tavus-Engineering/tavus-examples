@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tavus Conversation with Recording</title>
+  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #instructions {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 3px;
+      border-radius: 5px;
+      width: 80%;
+      margin-bottom: 5px;
+    }
+    #instructions h2 {
+      margin-top: 0;
+      cursor: pointer;
+    }
+    #instructions a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    #instructions a:hover {
+      text-decoration: underline;
+    }
+    #instructions-content {
+      display: none;
+      margin-top: 10px;
+    }
+    #video-frame {
+      width: 80%;
+      height: 500px;
+      border: 2px solid #ddd;
+      margin-bottom: 20px;
+    }
+    button, input {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+    }
+    input {
+      width: 80%;
+    }
+    button {
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+    .button-container {
+      display: flex;          /* Switch to row layout for buttons */
+      flex-direction: row;    /* Ensure buttons are laid out horizontally */
+      gap: 10px;              /* Add spacing between buttons */
+    }
+  </style>
+</head>
+<body>
+  <div id="instructions">
+    <a onclick="toggleInstructions()">Setup Instructions (Expand/Collapse)</a>
+    <div id="instructions-content">
+      <ol>
+        <li>
+          Setup your own Amazon S3 bucket to receive recordings. Full instructions from Daily.co (our video meeting provider) are 
+          <a href="https://docs.daily.co/guides/products/live-streaming-recording/storing-recordings-in-a-custom-s3-bucket" target="_blank">here</a>.
+        </li>
+        <li>
+          Create a Tavus Conversation. Refer to the 
+          <a href="https://docs.tavus.io/api-reference/conversations/create-conversation" target="_blank">documentation</a>.
+        </li>
+        <li>
+          Make sure to set <code>enable_recording</code> to <code>true</code>, and provide the proper values (from Step 1) for:
+          <ul>
+            <li><code>recording_s3_bucket_name</code></li>
+            <li><code>recording_s3_bucket_region</code></li>
+            <li><code>aws_assume_role_arn</code></li>
+          </ul>
+        </li>
+        <li>
+          Once you have a Tavus Conversation URL (e.g., <code>https://tavus.daily.co/cc12345abcde</code>), paste it in the box and join the meeting. 
+          You can now experiment with the buttons to start and stop the recording using the Daily-JS SDK.
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <h1>Tavus Conversation with Recording</h1>
+  <input id="Conversation-url" type="text" placeholder="Enter your Tavus Conversation URL" />
+  <button id="join-Conversation">Join</button>
+  <div class="button-container">
+  <button id="start-recording" disabled>Start Recording</button>
+  <button id="stop-recording" disabled>Stop Recording</button>
+  </div>
+  <div id="video-frame"></div>
+  <div id="status"></div>
+  <script>
+    // Function to toggle the visibility of the instructions
+    function toggleInstructions() {
+      const instructionsContent = document.getElementById("instructions-content");
+      instructionsContent.style.display =
+        instructionsContent.style.display === "block" ? "none" : "block";
+    }
+
+    const videoFrame = document.getElementById("video-frame");
+    const joinButton = document.getElementById("join-Conversation");
+    const startRecordingButton = document.getElementById("start-recording");
+    const stopRecordingButton = document.getElementById("stop-recording");
+    const statusDiv = document.getElementById("status");
+    let callFrame;
+
+    // Join Conversation
+    joinButton.addEventListener("click", () => {
+      const ConversationURL = document.getElementById("Conversation-url").value;
+
+      if (!ConversationURL) {
+        statusDiv.textContent = "Please enter a valid Conversation URL.";
+        return;
+      }
+
+      // If a previous call frame exists, leave it
+      if (callFrame) {
+        callFrame.leave();
+        videoFrame.innerHTML = ""; // Clear the iframe
+      }
+
+      // Initialize the call frame
+      callFrame = DailyIframe.createFrame(videoFrame, {
+        showLeaveButton: true,
+      });
+
+      // Join the Conversation
+      callFrame.join({ url: ConversationURL }).then(() => {
+        statusDiv.textContent = "Joined Conversation successfully!";
+        startRecordingButton.disabled = false;
+        stopRecordingButton.disabled = false;
+      }).catch((error) => {
+        statusDiv.textContent = "Failed to join Conversation: " + error.message;
+      });
+    });
+
+    // Start Recording
+    startRecordingButton.addEventListener("click", () => {
+      try {
+        callFrame.startRecording({ recordingType: "cloud" });
+        statusDiv.textContent = "Recording started!";
+      } catch (error) {
+        statusDiv.textContent = "Failed to start recording: " + error.message;
+      }
+    });
+
+    // Stop Recording
+    stopRecordingButton.addEventListener("click", () => {
+      try {
+        callFrame.stopRecording();
+        statusDiv.textContent = "Recording stopped!";
+      } catch (error) {
+        statusDiv.textContent = "Failed to stop recording: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
