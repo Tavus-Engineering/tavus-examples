@@ -8,7 +8,7 @@
     "dev": "nodemon app.js"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.21.2",
     "node-fetch": "^2.6.1",
     "cors": "^2.8.5"
   },
