@@ -1,0 +1,26 @@
+{
+  "eslint.nodePath": "node_modules",
+  "eslint.trace.server": "verbose",
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.validate": [
+    "html",
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact"
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": false,
+  "editor.formatOnSaveMode": "file",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "html"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

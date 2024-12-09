@@ -1,0 +1,17 @@
+{
+    "tabWidth": 2,
+    "tailwindConfig": "./tailwind.config.ts",
+    "tailwindAttributes": [
+        "wrapperClassName",
+        "wrapClassName",
+        "rootClassName"
+    ],
+    "tailwindFunctions": [
+        "classNames",
+        "classnames",
+        "twMerge"
+    ],
+    "plugins": [
+        "prettier-plugin-tailwindcss"
+    ]
+}

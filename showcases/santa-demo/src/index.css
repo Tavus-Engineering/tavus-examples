@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+
+    --primary: 322 88.2% 56.9%;
+    --primary-foreground: 322 85% 95%;
+
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 127 41% 49%;
+
+    --progress: 213 86% 60%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 322 88.2% 56.9%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-secondary;
+    @apply font-inter;
+  }
+}
+
+@font-face {
+  font-family: "Christmas and Santona";
+  src: url("/src/fonts/Christmas and Santona.ttf") format("truetype");
+  font-display: swap;
+}
+
+main {
+  height: 100svh;
+}
+
+.text-shadow {
+  text-shadow:
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white;
+}
+
+.grecaptcha-badge {
+  width: 0 !important;
+  height: 0 !important;
+}

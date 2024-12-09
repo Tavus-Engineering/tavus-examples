@@ -15,6 +15,10 @@ This repository is packed with resources that demonstrate how you can build imme
 - [CVI Transparent Background](./examples/cvi-transparent-background)
 - [Replica Recording](./examples/replica-recording)
 
+## 🎄 Showcases
+
+- [Tavus Santa Demo](./showcases/santa-demo)
+
 ## 📚 Learn More
 
 Ready to dive deeper? Check out these resources:
