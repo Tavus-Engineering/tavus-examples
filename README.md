@@ -17,7 +17,7 @@ This repository is packed with resources that demonstrate how you can build imme
 
 ## 🎄 Showcases
 
-- [Tavus Santa Demo](./showcases/santa-demo)
+- [Tavus Santa Demo](./showcase/santa-demo)
 
 ## 📚 Learn More
 
