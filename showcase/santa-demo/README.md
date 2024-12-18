@@ -89,21 +89,16 @@ Customize your webhook's setting to change Santa's personality personalize the g
      // Replace with your own Persona ID
      persona_id: "p5317866", // Santa's unique persona ID in Tavus
      replica_id: "r79e1c033f", // Santa's unique replica ID
-     callback_url: "https://yourwebsite.com/santa-webhook", // Webhook to receive conversation updates
      conversation_name: "A Chat with Santa", // Name of the Santa-themed conversation
      conversational_context: "You are about to talk to Santa Claus, the jolly figure of holiday cheer...", // Adds context for the conversation
      custom_greeting: "Ho Ho Ho! Merry Christmas! How can Santa help you today?", // Santa's iconic greeting
      properties: {
        max_call_duration: 3600, // Maximum duration of the call in seconds (1 hour)
        participant_left_timeout: 60, // Time in seconds to wait after the participant leaves
-       participant_absent_timeout: 300, // Time in seconds to wait if no one joins
        enable_recording: false, // Enable recording of the conversation
        enable_transcription: false, // Enable transcription of the conversation
        apply_greenscreen: false, // Apply green screen to applicable replicas
        language: "english", // Language for the conversation (30 avalible languages!)
-       recording_s3_bucket_name: "santa-conversation-recordings", // S3 bucket for recordings
-       recording_s3_bucket_region: "us-east-1", // Region of the S3 bucket
-       aws_assume_role_arn: "", // Optional: AWS role ARN for accessing the S3 bucket
      },
    }),
 
