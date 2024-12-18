@@ -1,4 +1,4 @@
-# 🎅 Tavus Santa Demo  
+# Tavus Santa Demo  
 
 ## Build Your Own Santa  
 Welcome to the Tavus Santa Demo, a holiday-themed showcase of [Conversational Video Interface (CVI)](https://docs.tavus.io/sections/conversational-video-interface/cvi-overview) technology. With this demo, you can create interactive, lifelike Santa Personas or use it as a foundation to build your own Conversational AI experiences.  
