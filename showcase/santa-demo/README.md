@@ -104,6 +104,7 @@ Customize your webhook's setting to change Santa's personality personalize the g
 ## 📚 **Learn More About Tavus**  
 
 - [Developer Documentation](https://docs.tavus.io/)  
-- [API Reference](https://docs.tavus.io/api-reference/)  
+- [API Reference](https://docs.tavus.io/api-reference/)
 - [Tavus Platform](https://platform.tavus.io/)  
-- [Creating a Persona](https://docs.tavus.io/sections/conversational-video-interface/creating-a-persona)  
+- [Creating a Persona](https://docs.tavus.io/sections/conversational-video-interface/creating-a-persona)
+- [Daily React Reference](https://docs.daily.co/reference/daily-react)
