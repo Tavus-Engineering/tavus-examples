@@ -93,11 +93,6 @@ Customize your webhook's setting to change Santa's personality personalize the g
      conversational_context: "You are about to talk to Santa Claus, the jolly figure of holiday cheer...", // Adds context for the conversation
      custom_greeting: "Ho Ho Ho! Merry Christmas! How can Santa help you today?", // Santa's iconic greeting
      properties: {
-       max_call_duration: 3600, // Maximum duration of the call in seconds (1 hour)
-       participant_left_timeout: 60, // Time in seconds to wait after the participant leaves
-       enable_recording: false, // Enable recording of the conversation
-       enable_transcription: false, // Enable transcription of the conversation
-       apply_greenscreen: false, // Apply green screen to applicable replicas
        language: "english", // Language for the conversation (30 avalible languages!)
      },
    }),
