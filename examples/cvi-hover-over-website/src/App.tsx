@@ -8,7 +8,12 @@ import {
   DailyAudio,
   useAppMessage,
 } from "@daily-co/daily-react";
-import { createConversation, endConversation, overwriteConversationContext, createPersona } from "./api";
+import {
+  createConversation,
+  endConversation,
+  overwriteConversationContext,
+  createPersona,
+} from "./api";
 import type { IConversation } from "./types";
 
 /**
@@ -219,7 +224,7 @@ export const Video: React.FC<{ id: string }> = ({ id }) => {
         );
 
         gl.uniform1i(imageLocation, 0);
-        gl.uniform3f(keyColorLocation, 3 / 255, 255 / 255 , 156/ 255); // Standard chroma key green
+        gl.uniform3f(keyColorLocation, 3 / 255, 255 / 255, 156 / 255); // Standard chroma key green
         gl.uniform1f(thresholdLocation, 0.4); // Increased threshold for better keying
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -240,7 +245,9 @@ export const Video: React.FC<{ id: string }> = ({ id }) => {
   }, [isVideoReady, webGLContext]);
 
   return (
-    <div style={{ height: "800px", position: "relative", aspectRatio: "9 / 16" }}>
+    <div
+      style={{ height: "800px", position: "relative", aspectRatio: "9 / 16" }}
+    >
       <DailyVideo
         sessionId={id}
         type="video"
@@ -310,7 +317,9 @@ const PulsingBackground = ({ isActive }: { isActive: boolean }) => {
         backgroundColor: "#4CAF50",
         opacity: isActive ? 0.2 : 0,
         transition: "all 0.3s ease-in-out",
-        animation: isActive ? "backgroundPulse 2s ease-in-out infinite" : "none",
+        animation: isActive
+          ? "backgroundPulse 2s ease-in-out infinite"
+          : "none",
         zIndex: -1,
         borderRadius: "50%", // Make it perfectly circular
       }}
@@ -352,14 +361,16 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
     }
 
     const audioContext = new AudioContext();
-    const source = audioContext.createMediaStreamSource(new MediaStream([localAudio.track]));
+    const source = audioContext.createMediaStreamSource(
+      new MediaStream([localAudio.track]),
+    );
     const analyser = audioContext.createAnalyser();
     analyser.fftSize = 256;
     source.connect(analyser);
     audioAnalyserRef.current = analyser;
 
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
-    
+
     const checkAudioLevel = () => {
       analyser.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
@@ -381,62 +392,73 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
   useAppMessage({
     onAppMessage: (event) => {
       const data = event.data;
-      console.log(data)
+      console.log(data);
 
       // Handle AI speaking state
-      if (data?.event_type === 'conversation.replica.started_speaking') {
+      if (data?.event_type === "conversation.replica.started_speaking") {
         setIsAISpeaking(true);
-      } else if (data?.event_type === 'conversation.replica.stopped_speaking') {
+      } else if (data?.event_type === "conversation.replica.stopped_speaking") {
         setIsAISpeaking(false);
       }
-      
+
       // Log all tool calls
-      if (data?.event_type === 'conversation.tool_call') {
-        console.log('Tool call received:', {
+      if (data?.event_type === "conversation.tool_call") {
+        console.log("Tool call received:", {
           fromId: event.fromId,
           type: data.type,
           tool: data.tool,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
       // Handle click tool calls specifically
-      if (data?.event_type === 'conversation.tool_call' && data?.properties?.name === 'clickElement') {
-        let args = JSON.parse(data.properties.arguments)
-        console.log('Click tool call received:', {
+      if (
+        data?.event_type === "conversation.tool_call" &&
+        data?.properties?.name === "clickElement"
+      ) {
+        let args = JSON.parse(data.properties.arguments);
+        console.log("Click tool call received:", {
           fromId: event.fromId,
           selector: args.selector,
           elementType: args.elementType,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
         // Try to find and click the element
         try {
-          const iframe = document.querySelector('iframe');
+          const iframe = document.querySelector("iframe");
           if (iframe && iframe.contentDocument) {
-            const element = iframe.contentDocument.querySelector(data.tool.function.arguments.selector);
+            const element = iframe.contentDocument.querySelector(
+              data.tool.function.arguments.selector,
+            );
             if (element) {
               (element as HTMLElement).click();
-              console.log('Successfully clicked element:', data.tool.function.arguments.selector);
+              console.log(
+                "Successfully clicked element:",
+                data.tool.function.arguments.selector,
+              );
             } else {
-              console.warn('Element not found:', data.tool.function.arguments.selector);
+              console.warn(
+                "Element not found:",
+                data.tool.function.arguments.selector,
+              );
             }
           }
         } catch (error) {
-          console.error('Error executing click:', error);
+          console.error("Error executing click:", error);
         }
       }
 
       // Log tool call responses
-      if (data?.type === 'tool_call_response') {
-        console.log('Tool call response:', {
+      if (data?.type === "tool_call_response") {
+        console.log("Tool call response:", {
           fromId: event.fromId,
           type: data.type,
           response: data.response,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
-    }
+    },
   });
 
   const toggleMicrophone = () => {
@@ -452,19 +474,21 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
         // Request screen sharing permission first
         const stream = await navigator.mediaDevices.getDisplayMedia({
           video: {
-            displaySurface: 'browser',
-            frameRate: 30
-          }
+            displaySurface: "browser",
+            frameRate: 30,
+          },
         });
-        
+
         await daily?.startScreenShare({
-          mediaStream: stream
+          mediaStream: stream,
         });
         setIsScreenSharing(true);
       }
     } catch (error) {
-      console.error('Screen sharing error:', error);
-      alert('Failed to toggle screen sharing. Please make sure you have granted screen sharing permissions.');
+      console.error("Screen sharing error:", error);
+      alert(
+        "Failed to toggle screen sharing. Please make sure you have granted screen sharing permissions.",
+      );
     }
   };
 
@@ -477,14 +501,16 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",
-        width: "280px"  // Fixed width for the video container
+        width: "280px", // Fixed width for the video container
       }}
     >
-      <div style={{ 
-        position: "relative",
-        width: "100%",
-        marginBottom: "-0.5rem"  // Negative margin to overlap with button container
-      }}>
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          marginBottom: "-0.5rem", // Negative margin to overlap with button container
+        }}
+      >
         {remoteParticipantIds.length > 0 ? (
           <>
             <Video id={remoteParticipantIds[0]} />
@@ -530,7 +556,7 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
           width: "100%",
           boxSizing: "border-box",
           justifyContent: "space-between",
-          zIndex: 10
+          zIndex: 10,
         }}
       >
         <button
@@ -544,7 +570,10 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
             border: "none",
             borderRadius: "0.25rem",
             cursor: "pointer",
-            animation: isMicEnabled && isUserSpeaking ? "buttonPulse 1.5s ease-in-out infinite" : "none",
+            animation:
+              isMicEnabled && isUserSpeaking
+                ? "buttonPulse 1.5s ease-in-out infinite"
+                : "none",
             transform: isUserSpeaking ? "scale(1.1)" : "scale(1)",
             transition: "transform 0.2s ease-in-out",
           }}
@@ -558,7 +587,11 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
               }
             `}
           </style>
-          {!isMicEnabled ? "Mic is Off" : isUserSpeaking ? "Speaking..." : "Mic is On"}
+          {!isMicEnabled
+            ? "Mic is Off"
+            : isUserSpeaking
+              ? "Speaking..."
+              : "Mic is On"}
         </button>
         <button
           type="button"
@@ -607,7 +640,7 @@ function App() {
   const [conversation, setConversation] = useState<IConversation | null>(null);
   const [loading, setLoading] = useState(false);
   const [personaId, setPersonaId] = useState<string | null>(() => {
-    return localStorage.getItem('lastPersonaId');
+    return localStorage.getItem("lastPersonaId");
   });
   const [url, setUrl] = useState("https://www.aerbits.ai");
   const DailyCall = useDaily();
@@ -617,33 +650,35 @@ function App() {
   // Function to create a new persona
   const handleCreatePersona = async () => {
     if (!apiKey) return;
-    
+
     setLoading(true);
     try {
       const persona = await createPersona(apiKey, {
         persona_name: "Interactive Web Assistant",
-        system_prompt: "You are an AI assistant that helps users interact with webpages through screen sharing.",
-        context: "You can interpret screen shares to provide guidance and assistance.",
+        system_prompt:
+          "You are an AI assistant that helps users interact with webpages through screen sharing.",
+        context:
+          "You can interpret screen shares to provide guidance and assistance.",
         layers: {
           llm: {
-            model: "tavus-gpt-4o"
+            model: "tavus-gpt-4o",
           },
           perception: {
             enabled: true,
             screen_share: {
               enabled: true,
               interval_ms: 5000,
-              quality: "high"
-            }
-          }
-        }
+              quality: "high",
+            },
+          },
+        },
       });
 
       setPersonaId(persona.persona_id);
-      localStorage.setItem('lastPersonaId', persona.persona_id);
-      alert('New persona created successfully!');
+      localStorage.setItem("lastPersonaId", persona.persona_id);
+      alert("New persona created successfully!");
     } catch (error) {
-      console.error('Failed to create persona:', error);
+      console.error("Failed to create persona:", error);
       alert(`Failed to create persona: ${error}`);
     }
     setLoading(false);
@@ -654,9 +689,12 @@ function App() {
     if (apiKey && DailyCall) {
       setLoading(true);
       try {
-        const conversation = await createConversation(apiKey, personaId || undefined);
+        const conversation = await createConversation(
+          apiKey,
+          personaId || undefined,
+        );
         setConversation(conversation);
-        console.log('conversation', conversation);
+        console.log("conversation", conversation);
         await DailyCall.join({ url: conversation.conversation_url });
       } catch (error) {
         alert(`Failed to join the call. ${error}`);
@@ -675,21 +713,30 @@ function App() {
   };
 
   return (
-    <main style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden" }}>
+    <main
+      style={{
+        position: "relative",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
       {/* URL Control Bar - Always visible */}
-      <div style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 20,
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        padding: "0.5rem",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-        display: "flex",
-        gap: "0.5rem",
-        alignItems: "center"
-      }}>
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 20,
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          padding: "0.5rem",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          display: "flex",
+          gap: "0.5rem",
+          alignItems: "center",
+        }}
+      >
         <input
           type="url"
           value={url}
@@ -699,7 +746,7 @@ function App() {
             padding: "0.5rem",
             borderRadius: "0.25rem",
             border: "1px solid #ccc",
-            marginLeft: "1rem"
+            marginLeft: "1rem",
           }}
           placeholder="Enter URL to browse"
         />
@@ -717,7 +764,7 @@ function App() {
             border: "none",
             borderRadius: "0.25rem",
             cursor: "pointer",
-            marginRight: "1rem"
+            marginRight: "1rem",
           }}
         >
           Load Page
@@ -738,29 +785,44 @@ function App() {
         }}
         title="Background Content"
       />
-      
+
       {!apiKey && (
-        <div style={{ position: "absolute", top: "60px", left: "50%", transform: "translateX(-50%)", zIndex: 10, padding: "20px", backgroundColor: "rgba(255, 0, 0, 0.1)" }}>
-          <p>Error: Tavus API key not found. Please add VITE_TAVUS_API_KEY to your .env file.</p>
+        <div
+          style={{
+            position: "absolute",
+            top: "60px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10,
+            padding: "20px",
+            backgroundColor: "rgba(255, 0, 0, 0.1)",
+          }}
+        >
+          <p>
+            Error: Tavus API key not found. Please add VITE_TAVUS_API_KEY to
+            your .env file.
+          </p>
         </div>
       )}
 
       {!conversation && !loading && apiKey && (
-        <div style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-          alignItems: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          padding: "2rem",
-          borderRadius: "1rem",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
-        }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            alignItems: "center",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            padding: "2rem",
+            borderRadius: "1rem",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <button
             onClick={handleStartCall}
             style={{
@@ -774,7 +836,7 @@ function App() {
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
               transition: "all 0.3s ease",
               width: "100%",
-              maxWidth: "400px"
+              maxWidth: "400px",
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = "scale(1.05)";
@@ -787,7 +849,7 @@ function App() {
           >
             Start Video Call
           </button>
-          
+
           <button
             onClick={handleCreatePersona}
             style={{
@@ -801,7 +863,7 @@ function App() {
               boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
               transition: "all 0.3s ease",
               width: "100%",
-              maxWidth: "400px"
+              maxWidth: "400px",
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = "scale(1.05)";
@@ -816,15 +878,17 @@ function App() {
           </button>
 
           {personaId && (
-            <div style={{
-              padding: "10px",
-              backgroundColor: "white",
-              borderRadius: "10px",
-              fontSize: "14px",
-              width: "100%",
-              maxWidth: "400px",
-              textAlign: "center"
-            }}>
+            <div
+              style={{
+                padding: "10px",
+                backgroundColor: "white",
+                borderRadius: "10px",
+                fontSize: "14px",
+                width: "100%",
+                maxWidth: "400px",
+                textAlign: "center",
+              }}
+            >
               Using Persona: {personaId}
             </div>
           )}
@@ -832,17 +896,19 @@ function App() {
       )}
 
       {loading && (
-        <div style={{ 
-          position: "absolute", 
-          top: "50%", 
-          left: "50%", 
-          transform: "translate(-50%, -50%)", 
-          zIndex: 10, 
-          padding: "20px",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          borderRadius: "10px",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
-        }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 10,
+            padding: "20px",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            borderRadius: "10px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <p>Loading...</p>
         </div>
       )}
