@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  height: 100vh;
+  background-color: rgb(248, 250, 252);
+  padding: 2rem;
+  color: rgb(9, 9, 11);
+}
+
+button,
+div,
+input {
+  box-sizing: border-box;
+}
+
+.token-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  width: 26.25rem;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.token-form label {
+  font-weight: 500;
+  color: rgb(9, 9, 11);
+  font-size: 1rem;
+}
+
+.token-form div {
+  display: flex;
+  gap: 0.5rem;
+}
