@@ -55,13 +55,21 @@ function App() {
   }
 
   return (
-    <main>
-      <DailyProvider>
-        {screen === 'welcome' && <WelcomeScreen onStart={handleStart} loading={loading} />}
-        {screen === 'hairCheck' && <HairCheckScreen handleEnd={handleEnd} handleJoin={handleJoin} />}
-        {screen === 'call' && conversation && <CallScreen conversation={conversation} handleEnd={handleEnd} />}
-      </DailyProvider>
-    </main>
+    <div className="relative w-full h-screen">
+      <iframe
+        src="https://www.google.com"
+        className="fixed inset-0 w-full h-full z-0"
+        style={{ opacity: 0.3 }}
+        title="Background Google"
+      />
+      <main className="relative z-10">
+        <DailyProvider>
+          {screen === 'welcome' && <WelcomeScreen onStart={handleStart} loading={loading} />}
+          {screen === 'hairCheck' && <HairCheckScreen handleEnd={handleEnd} handleJoin={handleJoin} />}
+          {screen === 'call' && conversation && <CallScreen conversation={conversation} handleEnd={handleEnd} />}
+        </DailyProvider>
+      </main>
+    </div>
   )
 }
 
