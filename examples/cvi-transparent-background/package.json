@@ -14,11 +14,8 @@
   "dependencies": {
     "@daily-co/daily-js": "^0.73.0",
     "@daily-co/daily-react": "^0.22.0",
-    "@types/canvas-confetti": "^1.9.0",
-    "canvas-confetti": "^1.9.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rollup": "^4.36.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",

@@ -2,22 +2,27 @@ import type { IConversation } from "../types";
 
 export const createConversation = async (
   token: string,
-  personaId?: string
 ): Promise<IConversation> => {
-  console.log(personaId)
   const response = await fetch("https://tavusapi.com/v2/conversations", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "x-api-key": token,
     },
-    body: JSON.stringify(personaId ? { persona_id: personaId, properties: { apply_greenscreen: true } } : {}),
+    body: JSON.stringify({
+      // Stock Demo Persona
+      persona_id: "p9a95912",
+      properties: {
+        // Apply greenscreen to the background
+        apply_greenscreen: true,
+      },
+    }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to create conversation: ${response.statusText}`);
-    console.log(response)
+  if (!response?.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  return data;
 };
