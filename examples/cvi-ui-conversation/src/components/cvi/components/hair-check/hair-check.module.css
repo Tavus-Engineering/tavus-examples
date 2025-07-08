@@ -1,0 +1,212 @@
+/* Button Component */
+/* Start of Selection */
+.buttonCancel {
+	padding: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background-color: rgba(239, 68, 68, 0.8);
+	border-radius: 9999px;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s;
+	outline: none;
+}
+
+.buttonCancel:hover {
+	background-color: rgba(239, 68, 68, 1);
+}
+/* End of Selection */
+
+/* ButtonJoin Component */
+.buttonJoin {
+	padding: 5px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 9999px;
+	color: white;
+	height: 3.625rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.buttonJoinInner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #32c75c;
+	border-radius: 9999px;
+	padding: 1rem;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	height: 3rem;
+	transition: background-color 0.2s;
+	font-weight: 500;
+	min-width: 8.5rem;
+}
+
+.buttonJoin:hover .buttonJoinInner {
+	background-color: rgba(62, 192, 97, 0.9);
+}
+
+.buttonJoin:disabled .buttonJoinInner {
+	background-color: rgba(34, 197, 94, 0.5);
+	cursor: not-allowed;
+}
+
+.buttonJoinDesktop {
+	display: none;
+}
+
+@media (min-width: 768px) {
+	.buttonJoinDesktop {
+		display: flex;
+	}
+}
+
+.buttonJoinMobile {
+	position: absolute;
+	top: -5.125rem;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 20;
+}
+
+@media (min-width: 768px) {
+	.buttonJoinMobile {
+		display: none;
+	}
+}
+
+/* HaircheckScreen Component */
+.haircheckBlock {
+	position: relative;
+	width: 100%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 9/16;
+	overflow: hidden;
+	border-radius: 0.5rem;
+	max-height: 90vh;
+}
+
+@media (min-width: 768px) {
+	.haircheckBlock {
+		aspect-ratio: 16/9;
+	}
+}
+
+.dailyVideo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover !important;
+	position: absolute;
+	inset: 0;
+	transition: opacity 0.3s ease-in-out;
+}
+
+.haircheckUserPlaceholder {
+	position: absolute;
+	inset: 0;
+  background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
+	z-index: 5;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.haircheckUserIcon {
+	width: 12.5rem;
+	height: 12.5rem;
+	border-radius: 9999px;
+	background-color: rgba(255, 255, 255, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.haircheckSidebar {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: rgba(2, 6, 23, 0.45);
+	backdrop-filter: blur(20px);
+	border-left: 1px solid rgba(255, 255, 255, 0.2);
+	z-index: 5;
+}
+
+@media (min-width: 768px) {
+	.haircheckSidebar {
+		left: auto;
+		top: 0;
+		bottom: 0;
+		width: 17.5rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.haircheckSidebar {
+		width: 23rem;
+	}
+}
+
+.haircheckSidebarContent {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1.5rem 1.25rem;
+	gap: 1.5rem;
+	width: 100%;
+	height: 100%;
+}
+
+@media (min-width: 768px) {
+	.haircheckSidebarContent {
+		padding: 1rem 1.25rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.haircheckSidebarContent {
+		padding: 2rem 1.25rem;
+	}
+}
+
+.haircheckContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2rem;
+}
+
+.haircheckDescription {
+	color: #ffffff;
+	font-size: 1.125rem;
+	font-weight: 500;
+}
+
+@media (min-width: 768px) {
+	.haircheckDescription {
+		font-size: 1.25rem;
+	}
+}
+
+.haircheckControls {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 1rem;
+}
