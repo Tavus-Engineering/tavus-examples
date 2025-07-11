@@ -4,6 +4,8 @@ This Flask application provides a chat completion API that incorporates real-tim
 
 This is meant to show that you can do anything in the LLM layer (not just calling an LLM), as long as you parse the input and structure the output in the [OpenAI formats](https://platform.openai.com/docs/api-reference/chat).
 
+Please note that in order to use your custom LLM with CVI, you will need to deploy it such that the `/chat/completions` endpoint is accessible over the broader network.
+
 ## Features
 - Chat completion using OpenAI's GPT model
 - Real-time ISS location integration
