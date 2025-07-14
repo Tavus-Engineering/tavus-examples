@@ -1,0 +1,115 @@
+/* SelectDevice styles */
+.selectDevice {
+	height: 3rem;
+	width: 5.5rem;
+	border-radius: 9999px;
+	background-color: rgba(255, 255, 255, 0.2);
+	padding: 0 0.75rem;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(10px);
+	color: transparent;
+	padding-right: 2rem; /* space for arrow */
+	box-sizing: border-box;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	cursor: pointer;
+}
+
+.selectDevice::-ms-expand {
+	display: none;
+}
+
+.selectDevice option {
+	color: transparent;
+	background-color: transparent;
+}
+
+.selectDevice:focus {
+	outline: none;
+}
+
+/* Device button container styles */
+.deviceButtonContainer {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 9999px;
+	backdrop-filter: blur(4px);
+}
+
+/* Device button styles */
+.deviceButton {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 10;
+	height: 3rem;
+	width: 3rem;
+	border-radius: 9999px;
+	background-color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid transparent;
+	cursor: pointer;
+}
+
+.deviceButtonIcon {
+	display: flex;
+}
+
+.deviceButton:disabled {
+	opacity: 0.5;
+}
+
+/* Screen reader only text */
+.srOnly {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+/* Controls container */
+.controlsContainer {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	align-items: center;
+}
+
+.selectDeviceContainer {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.selectArrow {
+	position: absolute;
+	right: 1rem;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+
+.screenShareButton {
+	cursor: pointer;
+	position: relative;
+	height: 3rem;
+	width: 3rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 9999px;
+	backdrop-filter: blur(4px);
+	background-color: rgba(255, 255, 255, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}

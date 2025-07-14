@@ -1,0 +1,33 @@
+.container {
+	overflow: hidden;
+	border: 1px solid white;
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: 9999px;
+	will-change: transform;
+	transform: translateZ(0);
+}
+
+.waveContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.125rem;
+	width: 100%;
+	height: 100%;
+}
+
+.bar {
+	width: 0.25rem;
+	height: 0.25rem;
+	background-color: white;
+	border-radius: 9999px;
+	transition: height 200ms ease-out;
+	will-change: height;
+	transform: translateZ(0);
+}
+
+.barInactive {
+	width: 0.25rem !important;
+	height: 0.25rem !important;
+}

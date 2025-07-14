@@ -14,6 +14,8 @@ This repository is packed with resources that demonstrate how you can build imme
 - [CVI Quickstart React](./examples/cvi-quickstart-react)
 - [CVI Transparent Background](./examples/cvi-transparent-background)
 - [Replica Recording](./examples/replica-recording)
+- [CVI UI Conversation](./examples/cvi-ui-conversation)
+- [CVI UI Haircheck and Conversation](./examples/cvi-ui-haircheck-conversation)
 
 ## 🎄 Showcases
 
