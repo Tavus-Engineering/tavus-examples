@@ -1,4 +1,8 @@
+import os
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # -- Create a new persona --
@@ -12,19 +16,29 @@ persona_payload = {
     "layers": {
         "llm": {
             "model": "your-model-name",
-            "base_url": "localhost:5000", # (replace with your base URL)
-            "api_key": "your-api-key",
+            "base_url": os.getenv("NGROK_URL", "http://localhost:5000"), # ngrok URL or fallback to localhost
+            "api_key": "random-api-key",
         },
         "vqa": {"enable_vision": "false"}
     }
 }
 headers = {
-    "x-api-key": "your-api-key",
+    "x-api-key": os.getenv("TAVUS_API_KEY"),
     "Content-Type": "application/json"
 }
 
-response = requests.request("POST", persona_url, json=persona_payload, headers=headers)
-persona_id = response["persona_id"]
+try:
+    response = requests.request("POST", persona_url, json=persona_payload, headers=headers)
+    print(f"Persona creation response status: {response.status_code}")
+    response.raise_for_status()  # Raise an exception for bad status codes
+    response_data = response.json()
+    persona_id = response_data["persona_id"]
+    print(f"Persona created successfully! ID: {persona_id}")
+except requests.exceptions.RequestException as e:
+    print(f"Error creating persona: {e}")
+    if hasattr(e, 'response') and e.response is not None:
+        print(f"Response content: {e.response.text}")
+    exit(1)
 
 # -- Create a new conversation with that persona --
 conversation_url = "https://tavusapi.com/v2/conversations"
@@ -42,5 +56,14 @@ conversation_payload = {
     }
 }
 
-response = requests.request("POST", conversation_url, json=conversation_payload, headers=headers)
-print(response.text)
+try:
+    response = requests.request("POST", conversation_url, json=conversation_payload, headers=headers)
+    print(f"Conversation creation response status: {response.status_code}")
+    response.raise_for_status()  # Raise an exception for bad status codes
+    print("Conversation created successfully!")
+    print(response.json())
+except requests.exceptions.RequestException as e:
+    print(f"Error creating conversation: {e}")
+    if hasattr(e, 'response') and e.response is not None:
+        print(f"Response content: {e.response.text}")
+    exit(1)

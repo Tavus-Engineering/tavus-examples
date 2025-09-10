@@ -42,8 +42,36 @@ def run_async(coro):
     return loop.run_until_complete(coro)
 
 
+def authenticate_request():
+    """Check if the request has a valid API key"""
+    auth_header = request.headers.get('Authorization')
+    api_key_header = request.headers.get('X-API-Key')
+    
+    # Check for API key in Authorization header (Bearer token format)
+    if auth_header and auth_header.startswith('Bearer '):
+        provided_key = auth_header.split(' ')[1]
+    # Check for API key in X-API-Key header
+    elif api_key_header:
+        provided_key = api_key_header
+    else:
+        return False
+    
+    # For now, accept any non-empty API key (you can make this more secure)
+    return provided_key and len(provided_key) > 0
+
 @app.route("/chat/completions", methods=["POST"])
 def chat_completion():
+    # Debug: Print request headers and data
+    print(f"Request headers: {dict(request.headers)}")
+    print(f"Request method: {request.method}")
+    print(f"Request URL: {request.url}")
+    
+    # Check authentication
+    if not authenticate_request():
+        print("Authentication failed - returning 401")
+        return Response("Unauthorized", status=401)
+    
+    print("Authentication successful")
     try:
         start_time = time.perf_counter()
         data = request.json
@@ -73,4 +101,4 @@ def chat_completion():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
