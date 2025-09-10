@@ -175,15 +175,6 @@ The Flask app includes debug logging. Check the console output for:
 - OpenAI API call timing
 - Error messages and stack traces
 
-## Production Deployment
-
-For production use:
-1. Deploy your Flask app to a cloud service (AWS, GCP, Azure, etc.)
-2. Use a production WSGI server like Gunicorn
-3. Implement proper API key validation
-4. Add rate limiting and monitoring
-5. Use HTTPS with proper SSL certificates
-
 ## License
 
 This project is licensed under the MIT License.
