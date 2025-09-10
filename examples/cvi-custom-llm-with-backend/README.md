@@ -1,10 +1,10 @@
-# Custom LLM Demo
+# Custom LLM Demo with Tavus CVI
 
-This Flask application provides a chat completion API that incorporates real-time International Space Station (ISS) location data into your conversation, alongside hitting an LLM.
+This Flask application provides a chat completion API that can be used as a custom LLM backend for Tavus Conversational Video Interface (CVI). The example incorporates real-time International Space Station (ISS) location data into your conversation, alongside hitting an LLM.
 
 This is meant to show that you can do anything in the LLM layer (not just calling an LLM), as long as you parse the input and structure the output in the [OpenAI formats](https://platform.openai.com/docs/api-reference/chat).
 
-Please note that in order to use your custom LLM with CVI, you will need to deploy it such that the `/chat/completions` endpoint is accessible over the broader network.
+**Important:** To use your custom LLM with Tavus CVI, you need to deploy it such that the `/chat/completions` endpoint is accessible over the internet. This guide shows you how to use ngrok for local development.
 
 ## Features
 - Chat completion using OpenAI's GPT model
@@ -15,56 +15,126 @@ Please note that in order to use your custom LLM with CVI, you will need to depl
 ## Prerequisites
 
 - Python 3.7+
-- Flask
-- OpenAI Python client
-- requests
-- aiohttp
-- python-dotenv
+- OpenAI API key
+- Tavus API key
+- ngrok (for local development)
+- All Python dependencies (listed in requirements.txt)
 
 ## Installation
 
 1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/iss-chat-api.git
-   cd iss-chat-api
+   ```bash
+   git clone git@github.com:Tavus-Engineering/tavus-examples.git
+   cd examples/cvi-custom-llm-with-backend
    ```
 
-2. Install the required packages:
+2. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
+
+3. Install the required packages:
+   ```bash
    pip install -r requirements.txt
    ```
 
-3. Create a `.env` file in the project root and add your OpenAI API key:
+4. Install ngrok (if not already installed):
+   ```bash
+   # On macOS with Homebrew
+   brew install ngrok
+   
+   # Or download from https://ngrok.com/download
    ```
+
+5. Create a `.env` file in the project root and add your API keys:
+   ```env
    OPENAI_API_KEY=your_openai_api_key_here
+   TAVUS_API_KEY=your_tavus_api_key_here
+   NGROK_URL=https://your-ngrok-url.ngrok-free.app
    ```
 
 ## Usage
 
-1. Start the Flask server:
-   ```
-   python app.py
+### Step 1: Start the Flask Server
+
+1. Activate your virtual environment:
+   ```bash
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-2. Send a POST request to `http://localhost:5000/chat/completions` with a JSON payload containing the messages:
-   ```json
-   {
-     "messages": [
-       {"role": "user", "content": "What is the current location of the ISS?"}
-     ]
-   }
+2. Start the Flask server:
+   ```bash
+   python custom_llm_iss.py
    ```
-   Here you're actually receiving this exact format from us, thus parsing this body is standardized. If you don't disable the VQA layer during Persona creation, you'll get our system prompt that incorporates visual data into the prompt.
    
-   **Note that if you have your backend that serves requests at `http://localhost:5000/chat/completions`, your endpoint when specifying the LLM layer should be `http://localhost:5000`!**
+   The server will start on `http://127.0.0.1:8000` (Note: We use port 8000 to avoid conflicts with macOS AirPlay on port 5000)
 
-3. The API will respond with a streaming completion that includes the current ISS location. If you respond to us via streaming when designing your backend, we can stream out the response and drastically improve the overall conversation experience.
+### Step 2: Expose Your Local Server with ngrok
+
+1. In a new terminal window, start ngrok:
+   ```bash
+   ngrok http 8000
+   ```
+
+2. Copy the ngrok URL (e.g., `https://abc123.ngrok-free.app`) and update your `.env` file:
+   ```env
+   NGROK_URL=https://abc123.ngrok-free.app
+   ```
+
+### Step 3: Test Your API
+
+Test your endpoint with curl:
+```bash
+curl -X POST https://your-ngrok-url.ngrok-free.app/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer random-api-key" \
+  -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
+```
+
+### Step 4: Create a Tavus Persona and Conversation
+
+Run the conversation creation script:
+```bash
+python conversation_creation.py
+```
+
+This will:
+1. Create a new Tavus persona with your custom LLM endpoint
+2. Create a conversation using that persona
+3. Return the conversation details
+
+**Expected Response:**
+```json
+{
+  "conversation_id": "c0eaa60a267274af",
+  "conversation_name": "Jared Life Coach", 
+  "conversation_url": "https://tavus.daily.co/c0eaa60a267274af",
+  "status": "active",
+  "callback_url": "https://yourwebsite.com/webhook",
+  "created_at": "2025-09-10T00:35:24.310570Z"
+}
+```
+
+### Step 5: Test Your Conversation
+
+Click on the `conversation_url` from the response (e.g., `https://tavus.daily.co/c0eaa60a267274af`) to start a video conversation with your custom LLM-powered AI avatar!
+
+**Important Notes:**
+- The API expects requests with an `Authorization: Bearer <token>` header
+- Tavus will send requests in the standard OpenAI chat completions format
+- Your endpoint should return streaming responses for the best user experience
+- Make sure your ngrok tunnel stays active while testing
 
 ## API Endpoints
 
 ### POST /chat/completions
 
-Initiates a chat completion with real-time ISS location data.
+Initiates a chat completion that forwards requests to OpenAI's API with authentication.
+
+**Headers:**
+- `Content-Type: application/json`
+- `Authorization: Bearer <your-api-key>` (any non-empty string works for this demo)
 
 **Request Body:**
 ```json
@@ -76,14 +146,43 @@ Initiates a chat completion with real-time ISS location data.
 ```
 
 **Response:**
-A streaming response containing the chat completion.
+A streaming response in OpenAI chat completions format:
+```
+data: {"choices": [{"delta": {"content": "Hello"}}]}
+data: {"choices": [{"delta": {"content": "!"}}]}
+data: [DONE]
+```
 
 ## How It Works
 
-1. The application fetches the current ISS location from the Open Notify API.
-2. It then prepares the initial messages, including the system prompt and user input.
-3. The ISS location is appended to the user's message.
-4. The application streams the chat completion from the OpenAI API, incorporating the ISS data.
+1. **Authentication**: The Flask app checks for an API key in the `Authorization` header
+2. **Request Processing**: Incoming requests are parsed and forwarded to OpenAI's API
+3. **Streaming Response**: The response is streamed back in real-time using OpenAI's streaming format
+4. **Tavus Integration**: Tavus CVI calls your endpoint and receives the streaming response for natural conversations
+
+## Troubleshooting
+
+### Common Issues
+
+2. **ngrok tunnel expires**: Free ngrok tunnels expire after 2 hours. Restart ngrok and update your `.env` file
+3. **Authentication errors**: Make sure you're sending the `Authorization: Bearer <token>` header
+4. **502 Bad Gateway**: Check that your Flask app is running and ngrok is pointing to the correct port
+
+### Debug Mode
+
+The Flask app includes debug logging. Check the console output for:
+- Request headers and authentication status
+- OpenAI API call timing
+- Error messages and stack traces
+
+## Production Deployment
+
+For production use:
+1. Deploy your Flask app to a cloud service (AWS, GCP, Azure, etc.)
+2. Use a production WSGI server like Gunicorn
+3. Implement proper API key validation
+4. Add rate limiting and monitoring
+5. Use HTTPS with proper SSL certificates
 
 ## License
 
