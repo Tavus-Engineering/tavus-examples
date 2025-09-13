@@ -1,0 +1,60 @@
+---
+description: TypeScript coding standards and best practices
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# TypeScript Standards
+
+## Type Safety
+- Use TypeScript strict mode
+- Define proper interfaces for all component props
+- Use proper type annotations for function parameters and return types
+- Avoid `any` type - use proper typing or `unknown` when necessary
+- Use type guards for runtime type checking
+
+## Code Organization
+- Group imports: external libraries, internal modules, relative imports
+- Use named exports over default exports for better tree-shaking
+- Implement proper error handling with typed error objects
+- Use const assertions for immutable data
+
+## React + TypeScript Patterns
+- Use proper typing for React hooks
+- Define component prop interfaces with clear naming
+- Use generic types for reusable components
+- Implement proper event handler typing
+
+## API Integration
+- Define proper TypeScript types for API responses
+- Use discriminated unions for different response states
+- Implement proper error handling with typed errors
+- Use proper typing for async operations
+
+## Example Patterns
+```tsx
+// Component with proper typing
+interface UserCardProps {
+  user: {
+    id: string
+    name: string
+    email: string
+  }
+  onEdit?: (userId: string) => void
+  className?: string
+}
+
+export function UserCard({ user, onEdit, className }: UserCardProps) {
+  const handleEdit = useCallback(() => {
+    onEdit?.(user.id)
+  }, [user.id, onEdit])
+
+  return (
+    <div className={cn("user-card", className)}>
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+      {onEdit && <Button onClick={handleEdit}>Edit</Button>}
+    </div>
+  )
+}
+```

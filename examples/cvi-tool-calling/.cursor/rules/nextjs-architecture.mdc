@@ -1,0 +1,52 @@
+---
+description: Next.js 15.5.3 architecture and best practices
+globs: ["src/app/**/*", "src/components/**/*", "src/lib/**/*"]
+alwaysApply: true
+---
+
+# Next.js 15.5.3 Architecture Guidelines
+
+## Project Structure
+- Use Next.js 15.5.3 with App Router (src/app directory structure)
+- Follow React Server Components (RSC) patterns by default
+- Use TypeScript for all components and utilities
+- Implement proper file naming conventions: kebab-case for files, PascalCase for components
+
+## File Organization
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (routes)/          # Route groups
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/            # Reusable components
+│   ├── ui/               # shadcn/ui components
+│   └── custom/           # Custom components
+├── lib/                  # Utilities and configurations
+│   ├── utils.ts          # Utility functions
+│   └── cn.ts             # Class name utility
+└── types/                # TypeScript type definitions
+```
+
+## Next.js 15.5.3 Specific Features
+- Use React 19 features when appropriate
+- Implement proper server/client component boundaries
+- Use Next.js 15 caching and revalidation features
+- Implement proper error.tsx and loading.tsx files
+- Use the latest Next.js Image and Link optimizations
+
+## Performance Best Practices
+- Use React.memo for expensive components
+- Implement proper code splitting with dynamic imports
+- Use Next.js built-in optimizations (Image, Font, Script)
+- Implement proper caching strategies
+- Use Suspense boundaries for loading states
+
+## Code Standards
+- Use TypeScript strict mode
+- Implement proper error handling with try-catch blocks
+- Use React hooks properly (useState, useEffect, useCallback, useMemo)
+- Implement proper loading and error states
+- Use Next.js Image component for optimized images
+- Implement proper SEO with Next.js metadata API

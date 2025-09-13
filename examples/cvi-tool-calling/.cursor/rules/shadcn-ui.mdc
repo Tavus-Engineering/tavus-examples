@@ -1,0 +1,56 @@
+---
+description: shadcn/ui component library guidelines and patterns
+globs: ["src/components/**/*"]
+alwaysApply: true
+---
+
+# shadcn/ui Component Guidelines
+
+## UI Framework & Styling
+- Use shadcn/ui components as the primary UI library
+- Install shadcn/ui components using: `npx shadcn@latest add [component-name]`
+- Use Tailwind CSS for custom styling and component customization
+- Follow shadcn/ui design system patterns and conventions
+- Prefer composition over inheritance when building complex components
+
+## Component Structure
+- Create components in `src/components/ui/` for shadcn/ui components
+- Create custom components in `src/components/` with proper TypeScript interfaces
+- Use proper prop typing with TypeScript interfaces
+- Implement proper error boundaries and loading states
+- Follow the compound component pattern when appropriate
+
+## Styling Guidelines
+- Use Tailwind CSS utility classes for styling
+- Create custom CSS only when absolutely necessary
+- Use CSS variables for theming (following shadcn/ui patterns)
+- Implement responsive design with Tailwind breakpoints
+- Use Tailwind's design tokens for consistency
+
+## shadcn/ui Specific Guidelines
+- Always use the shadcn/ui CLI to add components
+- Customize components by modifying the component files directly
+- Use the cn() utility for conditional class names
+- Follow the shadcn/ui component API patterns
+- Implement proper variants and sizes for components
+
+## Component Example
+```tsx
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+
+interface CustomComponentProps {
+  className?: string
+  children: React.ReactNode
+}
+
+export function CustomComponent({ className, children }: CustomComponentProps) {
+  return (
+    <div className={cn("default-classes", className)}>
+      <Button variant="outline">
+        {children}
+      </Button>
+    </div>
+  )
+}
+```

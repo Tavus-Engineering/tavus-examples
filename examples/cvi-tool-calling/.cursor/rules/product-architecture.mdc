@@ -1,0 +1,159 @@
+---
+description: Product architecture patterns and design principles for CVI tool calling
+globs: ["src/**/*"]
+alwaysApply: true
+---
+
+# Product Architecture Guidelines
+
+## Core Architecture Principles
+- Follow clean architecture patterns with clear separation of concerns
+- Implement domain-driven design (DDD) principles
+- Use dependency injection for better testability
+- Maintain single responsibility principle for all modules
+- Implement proper abstraction layers
+
+## Project Structure
+```
+src/
+├── app/                    # Next.js App Router (Presentation Layer)
+│   ├── (routes)/          # Route groups for feature organization
+│   ├── api/               # API routes (Interface Layer)
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/            # UI Components (Presentation Layer)
+│   ├── ui/               # shadcn/ui components
+│   ├── features/         # Feature-specific components
+│   └── shared/           # Shared/reusable components
+├── lib/                  # Utilities and configurations (Infrastructure)
+│   ├── api/              # API client and services
+│   ├── auth/             # Authentication utilities
+│   ├── utils.ts          # Utility functions
+│   └── cn.ts             # Class name utility
+├── hooks/                # Custom React hooks (Application Layer)
+├── stores/               # State management (Application Layer)
+├── types/                # TypeScript type definitions (Domain Layer)
+└── constants/            # Application constants
+```
+
+## Layer Responsibilities
+
+### Presentation Layer (app/, components/)
+- Handle user interactions and UI rendering
+- Manage component state and props
+- Implement responsive design patterns
+- Handle form validation and user input
+
+### Application Layer (hooks/, stores/)
+- Orchestrate business logic
+- Manage application state
+- Handle side effects and async operations
+- Coordinate between presentation and domain layers
+
+### Domain Layer (types/, constants/)
+- Define business entities and value objects
+- Implement business rules and validation
+- Define domain interfaces and contracts
+- Maintain business logic independence
+
+### Infrastructure Layer (lib/)
+- Handle external API integrations
+- Manage data persistence
+- Implement cross-cutting concerns (logging, monitoring)
+- Provide technical utilities
+
+## Feature Organization
+- Group related functionality in feature folders
+- Use barrel exports for clean imports
+- Implement feature flags for gradual rollouts
+- Maintain consistent naming conventions
+
+## Data Flow Patterns
+- Use unidirectional data flow
+- Implement proper state management
+- Use React Query for server state
+- Implement optimistic updates where appropriate
+
+## Error Handling Strategy
+- Implement error boundaries at appropriate levels
+- Use proper error types and messages
+- Provide user-friendly error messages
+- Log errors for debugging and monitoring
+
+## Performance Considerations
+- Implement code splitting at feature level
+- Use lazy loading for heavy components
+- Optimize bundle size with tree shaking
+- Implement proper caching strategies
+
+## Testing Strategy
+- Write unit tests for business logic
+- Implement integration tests for API calls
+- Use component testing for UI components
+- Maintain high test coverage for critical paths
+
+## Security Patterns
+- Implement proper input validation
+- Use secure authentication patterns
+- Sanitize user inputs
+- Follow OWASP security guidelines
+
+## Scalability Patterns
+- Design for horizontal scaling
+- Implement proper caching strategies
+- Use microservices patterns where appropriate
+- Plan for future feature additions
+
+## Code Organization Examples
+
+### Feature Component Structure
+```tsx
+// src/components/features/tool-calling/
+├── ToolCallingForm.tsx
+├── ToolCallingList.tsx
+├── ToolCallingCard.tsx
+├── hooks/
+│   ├── useToolCalling.ts
+│   └── useToolCallingForm.ts
+├── types/
+│   └── tool-calling.types.ts
+└── index.ts
+```
+
+### API Service Structure
+```tsx
+// src/lib/api/tool-calling/
+├── tool-calling.service.ts
+├── tool-calling.types.ts
+├── tool-calling.queries.ts
+└── index.ts
+```
+
+### Custom Hook Pattern
+```tsx
+// src/hooks/useToolCalling.ts
+export function useToolCalling() {
+  const [data, setData] = useState<ToolCallingData | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  const executeToolCall = useCallback(async (params: ToolCallingParams) => {
+    // Implementation
+  }, [])
+
+  return { data, loading, error, executeToolCall }
+}
+```
+
+## Documentation Standards
+- Document all public APIs
+- Use JSDoc for complex functions
+- Maintain README files for each major feature
+- Document architectural decisions in ADRs
+
+## Monitoring and Observability
+- Implement proper logging at all levels
+- Use structured logging with context
+- Monitor performance metrics
+- Track user interactions and errors
