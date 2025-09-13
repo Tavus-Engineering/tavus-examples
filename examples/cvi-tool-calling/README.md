@@ -96,6 +96,37 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to start shopping with your AI assistant!
 
+## 🛒 How to Use the Shopping Assistant
+
+### Getting Started with Voice Commands
+
+When you open the application, the Tavus AI replica will greet you with:
+> "Hi I am tavus Shopping assistance, You can tell me anything available on our website and I will add it to our cart"
+
+### Voice Commands Examples
+
+Here are some natural ways you can ask the AI to add items to your cart:
+
+#### Basic Add to Cart
+- *"Add fresh bananas to my cart"*
+- *"I'd like some whole milk"*
+- *"Can you add sourdough bread to my cart?"*
+- *"Put some organic apples in my cart"*
+
+#### Specify Quantities
+- *"Add 2 fresh bananas to my cart"*
+- *"I need 1 gallon of whole milk"*
+- *"Can you add 3 organic apples please?"*
+- *"Put 2 containers of Greek yogurt in my cart"*
+
+
+### Troubleshooting
+
+If the AI can't find a product:
+- Make sure you're using the exact product names from the catalog above
+- Try rephrasing your request (e.g., "fresh bananas" instead of just "bananas")
+- The AI will tell you to check the website and add manually if it can't find the item
+
 ## 🛠 How Tool Calling Works
 
 ### Overview

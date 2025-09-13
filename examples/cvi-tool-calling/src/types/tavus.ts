@@ -2,6 +2,7 @@ export interface TavusConversationRequest {
   replica_id: string
   persona_id: string
   conversational_context?: string
+  custom_greeting?: string
   properties?: {
     participant_left_timeout?: number
     participant_absent_timeout?: number

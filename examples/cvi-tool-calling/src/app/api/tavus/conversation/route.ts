@@ -24,6 +24,11 @@ export async function POST(request: NextRequest) {
       tavusRequestBody.conversational_context = body.conversational_context
     }
 
+    // Add custom_greeting if provided
+    if (body.custom_greeting) {
+      tavusRequestBody.custom_greeting = body.custom_greeting
+    }
+
     // Add properties if provided, with default values for the specified timeouts
     tavusRequestBody.properties = {
       participant_left_timeout: 10, // 10 seconds

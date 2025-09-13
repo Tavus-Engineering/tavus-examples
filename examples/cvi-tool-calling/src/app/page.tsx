@@ -24,7 +24,8 @@ export default function Home() {
         await startConversation({
           replica_id: process.env.TAVUS_REPLICA_ID || 'rf4703150052',
           persona_id: process.env.TAVUS_PERSONA_ID || '',
-          conversational_context: conversationalContext
+          conversational_context: conversationalContext,
+          custom_greeting: "Hi I am tavus Shopping assistance, I can help you with your shopping needs."
         })
       } catch (error) {
         console.error('Failed to initialize Tavus conversation:', error)
