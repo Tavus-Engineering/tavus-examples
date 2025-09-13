@@ -1,0 +1,45 @@
+---
+description: API route patterns and backend integration standards
+globs: ["src/app/api/**/*", "src/lib/api/**/*"]
+alwaysApply: true
+---
+
+# API Patterns & Backend Integration
+
+## Next.js API Routes
+- Use Next.js API routes for backend functionality
+- Implement proper error handling for API calls
+- Use proper TypeScript types for API responses
+- Implement loading and error states for async operations
+
+## API Route Structure
+```tsx
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function GET(request: NextRequest) {
+  try {
+    // API logic here
+    return NextResponse.json({ data: 'success' })
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed' }, { status: 500 })
+  }
+}
+```
+
+## Error Handling
+- Always wrap API logic in try-catch blocks
+- Return appropriate HTTP status codes
+- Provide meaningful error messages
+- Log errors for debugging
+
+## Type Safety
+- Define request and response types
+- Use Zod for request validation
+- Type API responses consistently
+- Handle different response states properly
+
+## State Management
+- Use React state for local component state
+- Use URL search params for shareable state
+- Consider Zustand or React Query for complex state management
+- Implement proper form handling with react-hook-form

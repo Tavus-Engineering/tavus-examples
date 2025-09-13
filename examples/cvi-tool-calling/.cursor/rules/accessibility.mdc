@@ -1,0 +1,44 @@
+---
+description: Accessibility guidelines and WCAG compliance standards
+globs: ["src/components/**/*", "src/app/**/*"]
+alwaysApply: true
+---
+
+# Accessibility Guidelines
+
+## WCAG Compliance
+- Use semantic HTML elements
+- Implement proper ARIA attributes
+- Ensure keyboard navigation works properly
+- Test with screen readers
+- Follow WCAG 2.1 AA guidelines
+
+## Semantic HTML
+- Use proper heading hierarchy (h1, h2, h3, etc.)
+- Use semantic elements: main, nav, section, article, aside
+- Provide meaningful alt text for images
+- Use proper form labels and associations
+
+## Keyboard Navigation
+- Ensure all interactive elements are keyboard accessible
+- Implement proper tab order
+- Provide visible focus indicators
+- Handle keyboard events appropriately
+
+## ARIA Attributes
+- Use aria-label for unlabeled elements
+- Implement aria-expanded for collapsible content
+- Use aria-describedby for additional context
+- Provide proper role attributes when needed
+
+## Color and Contrast
+- Ensure sufficient color contrast ratios
+- Don't rely solely on color to convey information
+- Provide alternative ways to indicate state
+- Test with color blindness simulators
+
+## Testing
+- Test with screen readers (NVDA, JAWS, VoiceOver)
+- Use keyboard-only navigation
+- Validate with accessibility tools
+- Test with different zoom levels
