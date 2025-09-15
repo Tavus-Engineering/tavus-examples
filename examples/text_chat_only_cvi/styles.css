@@ -1,0 +1,242 @@
+/* General Styling */
+body {
+  background-color: #1e1e1e;
+  font-family: 'Courier New', Courier, monospace;
+  color: #f1f1f1;
+  margin: 0;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header Container */
+.header-container {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  border-bottom: 2px solid #df44a6;
+}
+
+.header-container h1 {
+  color: #df44a6;
+  margin-bottom: 10px;
+  font-size: 2em;
+}
+
+.description {
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.4;
+}
+
+.description p {
+  margin: 5px 0;
+  font-size: 1em;
+}
+
+.links {
+  margin-top: 8px;
+  font-size: 0.9em;
+}
+
+.links .separator {
+  color: #666;
+  margin: 0 10px;
+}
+
+.source-link {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+/* Main Container */
+.main-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Instructions Container */
+.instructions-container {
+  flex: 0 0 40%;
+  max-width: 500px;
+  background-color: rgba(30, 30, 30, 0.9);
+  padding: 30px;
+  border-radius: 10px;
+  border: 2px solid #df44a6;
+  box-shadow: 0 0 15px #df44a6;
+  height: fit-content;
+}
+
+.instructions-container h2 {
+  color: #df44a6;
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #df44a6;
+  padding-bottom: 10px;
+}
+
+.instructions-container ol {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  list-style-position: inside;
+}
+
+.instructions-container li {
+  margin: 15px 0;
+  line-height: 1.6;
+  padding-left: 5px;
+}
+
+.conversation-input {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: rgba(30, 30, 30, 0.5);
+  border-radius: 5px;
+  border: 1px solid #df44a6;
+}
+
+.conversation-input input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  border: 2px solid #df44a6;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #df44a6;
+  font-family: 'Courier New', Courier, monospace;
+  margin-bottom: 10px;
+}
+
+.conversation-input input:focus {
+  outline: none;
+  box-shadow: 0 0 15px #df44a6;
+}
+
+.conversation-input .note {
+  display: block;
+  color: #888;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+h1, h2, h3 {
+  color: #df44a6;
+}
+
+a {
+  color: #df44a6;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: #e75bbc;
+  text-shadow: 0 0 10px #df44a6;
+}
+
+a:visited {
+  color: #bfbfbf;
+}
+
+/* Video Section */
+.video-section {
+  flex: 0 0 60%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#video-container {
+  display: none;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #1e1e1e;
+  border-radius: 10px;
+  border: 2px solid #df44a6;
+  box-shadow: 0 0 15px #df44a6;
+  overflow: hidden;
+}
+
+#video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+}
+
+#chat-box {
+  display: none;
+  width: 100%;
+}
+
+#chat-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  border: 2px solid #df44a6;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #df44a6;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#chat-input:focus {
+  outline: none;
+  box-shadow: 0 0 15px #df44a6;
+}
+
+/* Start Button */
+#start-btn {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #df44a6;
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 18px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #df44a6;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#start-btn:hover {
+  background-color: #e75bbc;
+  box-shadow: 0 0 15px #df44a6;
+}
+
+/* Instructions */
+ol {
+  background-color: rgba(30, 30, 30, 0.9);
+  padding: 20px 40px;
+  border-radius: 10px;
+  border: 2px solid #df44a6;
+  box-shadow: 0 0 15px #df44a6;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+code {
+  background-color: #2a2a2a;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #df44a6;
+  font-family: 'Courier New', Courier, monospace;
+} 
