@@ -1,0 +1,23 @@
+# Core Pipecat framework
+pipecat-ai[daily,silero]
+
+# HTTP client for async requests
+aiohttp
+
+# Environment variable management
+python-dotenv
+
+# Logging
+loguru
+
+# Speech-to-Text service
+deepgram-sdk
+
+# Text-to-Speech service (Cartesia)
+# Installed as part of pipecat-ai
+
+# LLM service (Google)
+google-generativeai
+
+# Video service (Tavus)
+# Installed as part of pipecat-ai
