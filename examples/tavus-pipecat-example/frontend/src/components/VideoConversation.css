@@ -1,0 +1,589 @@
+/* Main container with new design */
+.home-box-new {
+  width: 70vw;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.home-box {
+  background: #140206;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* Support design header */
+.support-design {
+  background: #140206;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.support-design-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Decorative lines */
+.os_line_wrap {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.os_line {
+  width: 2px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  animation: line-pulse 2s ease-in-out infinite;
+}
+
+.os_line:nth-child(1) { animation-delay: 0s; }
+.os_line:nth-child(2) { animation-delay: 0.1s; }
+.os_line:nth-child(3) { animation-delay: 0.2s; }
+.os_line:nth-child(4) { animation-delay: 0.3s; }
+.os_line:nth-child(5) { animation-delay: 0.4s; }
+.os_line:nth-child(6) { animation-delay: 0.5s; }
+.os_line:nth-child(7) { animation-delay: 0.6s; }
+
+@keyframes line-pulse {
+  0%, 100% { 
+    opacity: 0.3;
+    height: 12px;
+  }
+  50% { 
+    opacity: 1;
+    height: 20px;
+  }
+}
+
+/* CVI Portal text */
+.text-size-tiny {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.text-type-raster {
+  font-family: 'Courier New', monospace;
+}
+
+.hero-type {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Video wrapper */
+.hero-support-wrap {
+  position: relative;
+}
+
+.hero_video-wrap {
+  position: relative;
+  width: 100%;
+  background: #000;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  overflow: hidden;
+}
+
+.video-stream {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Local video preview in corner */
+.local-video-preview {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 180px;
+  height: 135px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: #000;
+  z-index: 10;
+}
+
+.local-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror effect */
+}
+
+.local-video-label {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Video overlays */
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  gap: 1.5rem;
+  padding: 2rem;
+  z-index: 5;
+}
+
+.video-overlay.initial {
+  background: rgba(20, 2, 6, 0.95);
+}
+
+.connect-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.phone-icon {
+  width: 80px;
+  height: 80px;
+  stroke-width: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.connect-prompt h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.connect-prompt p {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.connect-btn {
+  margin-top: 1rem;
+  padding: 1.25rem 3rem;
+  background: white;
+  color: #140206;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+.connect-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.connect-btn:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+}
+
+.connect-btn:active {
+  transform: scale(0.98);
+}
+
+.video-overlay p {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.video-overlay.error {
+  background: rgba(20, 2, 6, 0.95);
+}
+
+.error-icon {
+  width: 72px;
+  height: 72px;
+  stroke-width: 2;
+  margin-bottom: 0.5rem;
+  color: #ff4757;
+}
+
+.retry-btn {
+  margin-top: 1rem;
+  padding: 1rem 2.5rem;
+  background: white;
+  color: #140206;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.retry-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+}
+
+/* Controls bar */
+.video-controls-bar {
+  background: rgba(20, 2, 6, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.status-dot.connecting {
+  background: #fbbf24;
+  color: #fbbf24;
+}
+
+.status-dot.connected {
+  background: #10b981;
+  color: #10b981;
+  animation: none;
+}
+
+.status-dot.error {
+  background: #ef4444;
+  color: #ef4444;
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Control buttons */
+.video-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.control-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+}
+
+.control-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.control-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.control-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+.control-button.disabled {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ff4757;
+}
+
+.control-button.disabled:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.control-button.disconnect {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ff4757;
+}
+
+.control-button.disconnect:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .home-box-new {
+    width: 85vw;
+  }
+
+  .support-design {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .support-design-box {
+    gap: 1rem;
+  }
+
+  .video-controls-bar {
+    padding: 1rem 1.5rem;
+  }
+
+  .connect-prompt h3 {
+    font-size: 1.75rem;
+  }
+
+  .phone-icon {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-box-new {
+    width: 95vw;
+    gap: 1rem;
+  }
+
+  .support-design {
+    padding: 1rem;
+  }
+
+  .support-design-box {
+    gap: 0.75rem;
+  }
+
+  .os_line_wrap {
+    gap: 3px;
+  }
+
+  .os_line {
+    width: 1.5px;
+    height: 10px;
+  }
+
+  .text-size-tiny {
+    font-size: 0.65rem;
+  }
+
+  .video-container {
+    aspect-ratio: 4/3;
+  }
+
+  .local-video-preview {
+    width: 120px;
+    height: 90px;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .video-controls-bar {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .status-indicator {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .video-controls {
+    width: 100%;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .control-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .control-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .connect-prompt h3 {
+    font-size: 1.5rem;
+  }
+
+  .connect-prompt p {
+    font-size: 1rem;
+  }
+
+  .phone-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .connect-btn {
+    padding: 1rem 2.5rem;
+    font-size: 1rem;
+  }
+
+  .connect-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .support-design-box {
+    gap: 0.5rem;
+  }
+
+  .os_line_wrap {
+    gap: 2px;
+  }
+
+  .os_line {
+    width: 1px;
+    height: 8px;
+  }
+
+  .text-size-tiny {
+    font-size: 0.6rem;
+  }
+
+  .local-video-preview {
+    width: 100px;
+    height: 75px;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .control-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .control-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .retry-btn {
+    padding: 0.875rem 2rem;
+    font-size: 0.875rem;
+  }
+
+  .connect-prompt h3 {
+    font-size: 1.25rem;
+  }
+
+  .connect-prompt p {
+    font-size: 0.9rem;
+  }
+
+  .phone-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .connect-btn {
+    padding: 0.875rem 2rem;
+    font-size: 0.875rem;
+  }
+
+  .connect-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
