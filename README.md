@@ -2,13 +2,6 @@
 
 Welcome to our collection of demos and projects showcasing the Tavus conversational video interface! 🚀
 
-## 🌟 What's Inside?
-
-This repository is packed with resources that demonstrate how you can build immersive AI-generated video experiences in your application:
-
-- 🤖 Build authentic digital twin experiences
-- 💡 Create advanced use cases for conversational video interfaces
-
 ## 💻 Examples
 
 - [CVI Quickstart React](./examples/cvi-quickstart-react)
