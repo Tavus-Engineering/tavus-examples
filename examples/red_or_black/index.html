@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red or Black Card Game</title>
+    <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
+    <style>
+        :root {
+            --felt-green: #0d5f2c;
+            --felt-green-dark: #084420;
+            --gold-accent: #d4af37;
+            --dark-wood: #4a2511;
+            --cream: #f5f0e1;
+            --casino-red: #a91409;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--felt-green-dark);
+            color: var(--cream);
+            display: flex;
+            gap: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            margin-left: 50px;
+        }
+        
+        .main-content.shrunk {
+            margin-left: -300px;
+        }
+        
+        .side-panel {
+            width: 200px;
+            background-color: var(--felt-green);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border: 4px solid var(--dark-wood);
+            position: relative;
+            z-index: 2;
+            height: fit-content;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+        
+        .side-panel:hover {
+            background-color: var(--felt-green-dark);
+        }
+        
+        .side-panel.expanded {
+            width: 800px;
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+        
+        .collapsible {
+            background-color: var(--dark-wood);
+            color: var(--gold-accent);
+            cursor: pointer;
+            padding: 8px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+        
+        .collapsible:hover {
+            background-color: #5a2f1a;
+        }
+        
+        .collapsible::after {
+            content: '🔽';
+            font-size: 12px;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .collapsible.expanded::after {
+            content: '🔼';
+        }
+        
+        .content {
+            display: none;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        
+        .content pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            color: var(--gold-accent);
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+            line-height: 1.2;
+            box-sizing: border-box;
+        }
+        
+        .api-key-input {
+            width: 100%;
+            padding: 8px;
+            margin: 0 0 8px 0;
+            border: 2px solid var(--dark-wood);
+            background-color: var(--cream);
+            color: #333;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .create-persona-btn {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--casino-red);
+            color: white;
+            border: 2px solid var(--gold-accent);
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .create-persona-btn:hover {
+            background-color: #7c0e06;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: var(--felt-green);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border: 4px solid var(--dark-wood);
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--gold-accent);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            border-bottom: 2px solid var(--gold-accent);
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background-color: rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--gold-accent);
+        }
+        
+        label {
+            color: var(--gold-accent);
+            font-weight: bold;
+        }
+        
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid var(--dark-wood);
+            background-color: var(--cream);
+            color: #333;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: var(--casino-red);
+            color: white;
+            border: 2px solid var(--gold-accent);
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background-color: #7c0e06;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-card-container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        #videoContainer {
+            flex: 1;
+            max-width: 350px;
+            aspect-ratio: 1/1;
+            background-color: #000;
+            background-image: url('https://cdn.zappy.app/5894c7f02a9209d6cbf58ecad6386382.png');
+            background-size: cover;
+            background-position: center;
+            display: none;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 3px solid var(--dark-wood);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        #canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        #cardContainer {
+            flex: 1;
+            max-width: 350px;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+            position: relative;
+            border: 3px solid var(--dark-wood);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        #cardImage {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            display: block;
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));
+        }
+        
+        #status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 4px;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid var(--gold-accent);
+        }
+        
+        .persona-note {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid var(--gold-accent);
+        }
+        
+        code {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 3px 6px;
+            border-radius: 3px;
+            color: var(--gold-accent);
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="side-panel">
+        <button class="collapsible">First Time? You'll need to create a persona.</button>
+        <div class="content">
+            <input type="text" id="createPersonaApiKey" class="api-key-input" placeholder="Enter your Tavus API Key">
+            <button class="create-persona-btn" onclick="createPersona()">Create New Persona</button>
+            <pre id="personaJson">{
+  "persona_name": "Card Game Host v2",
+  "system_prompt": "You are a friendly card game host who guides users through a game of Red or Black. In this game, users guess whether the next card will be red or black.",
+  "context": "Red or Black is a simple card game where players guess the color of the next card to be drawn from the deck. When a user says \"red\" or \"black\", you should acknowledge their guess and use the detect_color tool to record their choice.",
+  "default_replica_id": "r6583a465c",
+  "layers": {
+    "llm": {
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "detect_color",
+            "parameters": {
+              "type": "object",
+              "required": ["guess"],
+              "properties": {
+                "guess": {
+                  "enum": ["red", "black"],
+                  "type": "string",
+                  "description": "The color guessed by the user (red or black)"
+                }
+              }
+            },
+            "description": "Record the user's guess of whether the next card will be red or black"
+          }
+        }
+      ]
+    },
+    "tts": {
+      "tts_engine": "cartesia",
+      "tts_emotion_control": true
+    },
+    "perception": {
+      "perception_model": "raven-0"
+    },
+    "stt": {
+      "stt_engine": "tavus-advanced",
+      "participant_pause_sensitivity": "high",
+      "participant_interrupt_sensitivity": "high",
+      "smart_turn_detection": true
+    }
+  }
+}</pre>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <a href="https://github.com/andy-tavus/red_or_black/" target="_blank" style="color: var(--gold-accent); margin-right: 20px;">Source</a>
+                <a href="https://docs.tavus.io" target="_blank" style="color: var(--gold-accent);">Docs</a>
+            </div>
+            <h1>Red or Black</h1>
+            
+            <div id="apiKeyForm" class="form-group">
+                <label for="personaId">Persona ID:</label>
+                <input type="text" id="personaId" placeholder="Enter your Persona ID (create one using the panel on the left if this is your first time)">
+                
+                <label for="apiKey">Tavus API Key:</label>
+                <input type="text" id="apiKey" placeholder="Enter your Tavus API Key">
+                <button id="createConversation">Join the Game</button>
+            </div>
+            
+            <div id="status"></div>
+            <div class="video-card-container">
+                <div id="videoContainer">
+                    <canvas id="canvas"></canvas>
+                </div>
+                <div id="cardContainer">
+                    <img id="cardImage" src="https://deckofcardsapi.com/static/img/back.png" alt="Card back">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const apiKeyInput = document.getElementById('apiKey');
+        const personaIdInput = document.getElementById('personaId');
+        const createConversationBtn = document.getElementById('createConversation');
+        const statusDiv = document.getElementById('status');
+        const videoContainer = document.getElementById('videoContainer');
+        const cardContainer = document.getElementById('cardContainer');
+        const cardImage = document.getElementById('cardImage');
+        const canvas = document.getElementById('canvas');
+        
+        // Persona ID from the input field
+        let PERSONA_ID = 'p0ca29dfb766';
+        const CARD_BACK_URL = 'https://deckofcardsapi.com/static/img/back.png';
+        
+        // Create hidden video element for greenscreen processing
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.playsInline = true;
+        video.style.display = 'none';
+        document.body.appendChild(video);
+        
+        // Update persona ID when input changes
+        personaIdInput.addEventListener('change', () => {
+            PERSONA_ID = personaIdInput.value.trim();
+            console.log('Updated persona ID:', PERSONA_ID);
+        });
+        
+        // Daily call object
+        let call = null;
+        
+        // Show status message
+        function showStatus(message, isError = false) {
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = message;
+            statusDiv.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
+            statusDiv.style.color = isError ? '#721c24' : '#155724';
+        }
+        
+        // Create a Tavus conversation
+        async function createTavusConversation(apiKey) {
+            try {
+                showStatus('Creating conversation...');
+                
+                const requestBody = {
+                    persona_id: PERSONA_ID,
+                    replica_id: 'r92debe21318',
+                    properties: {
+                        max_call_duration: 180, // 180 seconds (3 minutes)
+                        apply_greenscreen: true // Enable greenscreen
+                    },
+                    callback_url: window.location.href // Just for demo purposes
+                };
+
+                console.log('Request body:', requestBody);
+                
+                const response = await fetch('https://tavusapi.com/v2/conversations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => null);
+                    console.error('API Error Response:', errorData);
+                    throw new Error(`API error: ${response.status} - ${errorData?.message || 'Unknown error'}`);
+                }
+                
+                const data = await response.json();
+                console.log('API Response:', data);
+                showStatus('Conversation created successfully!');
+                return data;
+            } catch (error) {
+                showStatus(`Error creating conversation: ${error.message}`, true);
+                throw error;
+            }
+        }
+        
+        // Join the Daily call
+        async function joinDailyCall(conversationUrl) {
+            try {
+                showStatus('Joining call...');
+                
+                // Create the Daily call object
+                call = window.Daily.createCallObject();
+                
+                // Set up event listeners
+                call.on('participant-joined', handleParticipantJoined);
+                call.on('error', handleError);
+                call.on('app-message', handleAppMessage); // Add listener for app messages
+                
+                // Join the call
+                await call.join({ 
+                    url: conversationUrl,
+                    userName: "Local" // Specify the name of the joining participant
+                });
+                
+                videoContainer.style.display = 'block';
+                cardContainer.style.display = 'block';
+                showStatus('Joined call successfully! Waiting for participants...');
+                
+                // Add a delay before checking for participants
+                setTimeout(() => {
+                    checkForExistingParticipant();
+                }, 1500); // Wait for 1.5 seconds before checking
+            } catch (error) {
+                showStatus(`Error joining call: ${error.message}`, true);
+            }
+        }
+        
+        // Function to apply chroma key transparency using Canvas 2D
+        function applyGreenScreen() {
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas dimensions to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Instead of using an image for the canvas background,
+            // we'll set the canvas background to be transparent
+            // and rely on the container's background image
+            canvas.style.background = 'transparent';
+            videoContainer.style.backgroundImage = "url('https://cdn.zappy.app/5894c7f02a9209d6cbf58ecad6386382.png')";
+            videoContainer.style.backgroundSize = 'cover';
+            videoContainer.style.backgroundPosition = 'center';
+            
+            function renderFrame() {
+                // Only process if video is playing and has dimensions
+                if (video.paused || video.ended || !video.videoWidth) {
+                    requestAnimationFrame(renderFrame);
+                    return;
+                }
+                
+                // Clear canvas with transparent background
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw the current video frame onto the canvas
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Extract pixel data and apply transparency to green pixels
+                const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = frame.data;
+                
+                // Enhanced green screen removal with edge handling
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const r = pixels[i];
+                    const g = pixels[i + 1];
+                    const b = pixels[i + 2];
+                    
+                    // Calculate how "green" the pixel is compared to other channels
+                    const greenDominance = g / (r + b + 0.1); // Avoid division by zero
+                    const colorDistance = Math.sqrt(
+                        Math.pow(r - 0, 2) + 
+                        Math.pow(g - 255, 2) + 
+                        Math.pow(b - 155, 2)
+                    );
+                    
+                    // Check if the pixel is part of the greenscreen
+                    const isFullGreen = Math.abs(r - 0) < 60 && 
+                                        Math.abs(g - 255) < 60 && 
+                                        Math.abs(b - 155) < 60;
+                    
+                    // Check if it's a green edge/spill (partial green with similar pattern)
+                    const isGreenEdge = colorDistance < 180 && greenDominance > 1.2;
+                    
+                    if (isFullGreen || isGreenEdge) {
+                        // Make pixel transparent so background shows through
+                        pixels[i + 3] = 0; // Set alpha to 0 (transparent)
+                    }
+                }
+                
+                // Put the processed image data back
+                ctx.putImageData(frame, 0, 0);
+                
+                // Continue processing frames
+                requestAnimationFrame(renderFrame);
+            }
+            
+            // Start the rendering loop
+            renderFrame();
+        }
+        
+        // Handle errors
+        function handleError(error) {
+            // Check if it's a meeting ended error
+            if (error.message && error.message.includes('Meeting has ended')) {
+                showStatus('Meeting has ended', false);
+            } else {
+                showStatus('Time Limit Reached', true);
+            }
+        }
+        
+        // Reset card back after 5 seconds
+        function resetCardBack() {
+            setTimeout(() => {
+                cardImage.src = CARD_BACK_URL;
+            }, 5000);
+        }
+        
+        // Check for existing participant
+        function checkForExistingParticipant() {
+            const participants = call.participants();
+            console.log('Participants:', participants);
+
+            const existingParticipant = Object.values(participants).find(
+                (participant) => participant.local === false
+            );
+
+            if (existingParticipant) {
+                console.log(`Existing participant found: ${existingParticipant.user_id}`);
+                showStatus(`Participant found: ${existingParticipant.user_name || 'Unknown'}`);
+
+                // Subscribe to the participant's video and audio tracks
+                if (existingParticipant.tracks.video.state === 'playable') {
+                    // Set up video stream for greenscreen processing
+                    video.srcObject = new MediaStream([existingParticipant.tracks.video.persistentTrack]);
+                    video.onloadedmetadata = () => applyGreenScreen();
+                } else {
+                    console.log('No playable video track for existing participant.');
+                }
+
+                if (existingParticipant.tracks.audio.state === 'playable') {
+                    const audioStream = new MediaStream([existingParticipant.tracks.audio.persistentTrack]);
+                    const audio = new Audio();
+                    audio.srcObject = audioStream;
+                    audio.autoplay = true;
+                } else {
+                    console.log('No playable audio track for existing participant.');
+                }
+            } else {
+                console.log('No existing participant found.');
+                showStatus('Waiting for participant to join...');
+            }
+        }
+        
+        // Handle when a participant joins
+        async function handleParticipantJoined(event) {
+            const participant = event.participant;
+            
+            // Skip local participant
+            if (participant.local) return;
+            
+            showStatus(`Participant joined: ${participant.user_name || 'Unknown'}`);
+            checkForExistingParticipant();
+        }
+        
+        // Handle app messages (tool calls)
+        async function handleAppMessage(event) {
+            console.log('Received app message event:', event);
+            
+            // The message is directly in the event data
+            const message = event.data;
+            console.log('Message data:', message);
+            
+            // Check if we have a valid message with the expected structure
+            if (!message || !message.message_type || !message.event_type) {
+                console.log('Invalid message structure:', message);
+                return;
+            }
+            
+            // Log user utterances
+            if (message.message_type === 'conversation' && message.event_type === 'conversation.utterance' && 
+                message.properties?.role === 'user') {
+                console.log('User said:', message.properties.speech);
+            }
+            
+            // Only process tool call events
+            if (message.message_type === 'conversation' && message.event_type === 'conversation.tool_call') {
+                // The tool call is directly in the properties object
+                const toolCall = message.properties;
+                console.log('Tool call:', toolCall);
+                
+                if (!toolCall) {
+                    console.log('No tool call found in message properties');
+                    return;
+                }
+                
+                if (toolCall.name === 'detect_color') {
+                    try {
+                        // Parse the arguments string into an object
+                        const args = JSON.parse(toolCall.arguments);
+                        const guess = args.guess;
+                        console.log('User guessed:', guess);
+                        
+                        // Draw a card from a new deck
+                        console.log('Drawing a card...');
+                        const response = await fetch('https://deckofcardsapi.com/api/deck/new/draw/?count=1');
+                        const data = await response.json();
+                        console.log('Card drawn:', data);
+                        
+                        if (data.success && data.cards.length > 0) {
+                            const card = data.cards[0];
+                            console.log('Card details:', card);
+                            
+                            // Display the drawn card
+                            cardImage.src = card.image;
+                            
+                            const isRed = card.suit === 'HEARTS' || card.suit === 'DIAMONDS';
+                            const isCorrect = (guess === 'red' && isRed) || (guess === 'black' && !isRed);
+                            console.log('Is red?', isRed, 'Is correct?', isCorrect);
+                            
+                            // Format the card value for better speech
+                            let cardValue = card.value;
+                            if (cardValue === 'ACE') cardValue = 'Ace';
+                            if (cardValue === 'KING') cardValue = 'King';
+                            if (cardValue === 'QUEEN') cardValue = 'Queen';
+                            if (cardValue === 'JACK') cardValue = 'Jack';
+                            
+                            // Format the suit name to lowercase
+                            let cardSuit = card.suit.toLowerCase();
+                            // Capitalize first letter
+                            cardSuit = cardSuit.charAt(0).toUpperCase() + cardSuit.slice(1);
+                            
+                            // Send response message
+                            const responseMessage = {
+                                message_type: "conversation",
+                                event_type: "conversation.echo",
+                                conversation_id: message.conversation_id,
+                                properties: {
+                                    text: isCorrect ? 
+                                        `You guessed right! The card was the ${cardValue} of ${cardSuit}.` : 
+                                        `You guessed wrong! The card was the ${cardValue} of ${cardSuit}.`
+                                }
+                            };
+                            
+                            console.log('Sending echo message:', responseMessage);
+                            call.sendAppMessage(responseMessage, '*');
+                            
+                            // Reset card back to the default after 5 seconds
+                            resetCardBack();
+                        } else {
+                            console.error('Failed to draw card:', data);
+                        }
+                    } catch (error) {
+                        console.error('Error in card game:', error);
+                    }
+                }
+            }
+        }
+        
+        // Event listener for create conversation button
+        createConversationBtn.addEventListener('click', async () => {
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!apiKey) {
+                showStatus('Please enter a valid Tavus API Key', true);
+                return;
+            }
+            
+            try {
+                // Create the conversation
+                const conversation = await createTavusConversation(apiKey);
+                
+                // Join the Daily call with the conversation URL
+                if (conversation && conversation.conversation_url) {
+                    await joinDailyCall(conversation.conversation_url);
+                } else {
+                    showStatus('No conversation URL returned from API', true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+        
+        // Update collapsible functionality
+        const collapsible = document.querySelector('.collapsible');
+        const content = document.querySelector('.content');
+        const sidePanel = document.querySelector('.side-panel');
+        
+        collapsible.addEventListener('click', function() {
+            const isExpanding = content.style.display !== 'block';
+            content.style.display = isExpanding ? 'block' : 'none';
+            sidePanel.classList.toggle('expanded', isExpanding);
+            collapsible.classList.toggle('expanded', isExpanding);
+        });
+        
+        // Create persona function
+        async function createPersona() {
+            const apiKey = document.getElementById('createPersonaApiKey').value.trim();
+            if (!apiKey) {
+                alert('Please enter your Tavus API Key');
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://tavusapi.com/v2/personas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey
+                    },
+                    body: document.getElementById('personaJson').textContent
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                alert(`Persona created successfully! Persona ID: ${data.persona_id}`);
+                // Update the persona ID input field with the new ID
+                document.getElementById('personaId').value = data.persona_id;
+            } catch (error) {
+                alert(`Error creating persona: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
