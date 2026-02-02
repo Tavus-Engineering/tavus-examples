@@ -52,7 +52,7 @@ The agent will start and wait for participants to join a LiveKit room.
 
 ### 4. Join the Room
 
-Open the [LiveKit Agents Playground](https://agents-playground.livekit.io/) and select **Manual** to connect with your LiveKit URL and a token. This lets you interact with the avatar directly in your browser.
+Open the [LiveKit Agents Playground](https://agents-playground.livekit.io/) and select **Connect** to connect with your LiveKit URL and a token. This lets you interact with the avatar directly in your browser.
 
 ## Project Structure
 
