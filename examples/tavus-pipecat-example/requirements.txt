@@ -1,5 +1,8 @@
 # Core Pipecat framework
-pipecat-ai[daily,silero]
+pipecat-ai[daily,silero,webrtc]
+
+# WebRTC prebuilt transport
+pipecat-ai-small-webrtc-prebuilt
 
 # HTTP client for async requests
 aiohttp

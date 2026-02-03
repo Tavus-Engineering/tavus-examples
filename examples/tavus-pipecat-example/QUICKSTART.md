@@ -7,8 +7,6 @@
 1. **Create and activate virtual environment:**
 
 ```bash
-cd /Users/ashishheda/tavus/pipecat-tavus
-
 # Create virtual environment
 python -m venv env
 
@@ -38,8 +36,6 @@ cd ..
 ### 1. Start the Pipecat Bot (Terminal 1)
 
 ```bash
-cd /Users/ashishheda/tavus/pipecat-tavus
-
 # Make sure virtual environment is activated
 source env/bin/activate
 
@@ -55,7 +51,7 @@ Wait until you see:
 ### 2. Start the Frontend (Terminal 2)
 
 ```bash
-cd /Users/ashishheda/tavus/pipecat-tavus/frontend
+cd frontend
 npm install  # Only needed first time
 npm start
 ```
