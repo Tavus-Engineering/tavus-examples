@@ -1,3 +1,20 @@
+/**
+ * VideoBox Component - Core Tavus CVI Integration
+ * 
+ * This component is responsible for:
+ * 1. Rendering the Tavus video avatar using Daily.js
+ * 2. Receiving and processing tool call events from the AI
+ * 3. Sending tool call responses back to the AI
+ * 4. Providing a draggable, resizable video interface
+ * 
+ * TOOL CALLING FLOW:
+ * 1. User speaks to AI: "Add bananas to my cart"
+ * 2. Tavus AI processes speech and decides to call 'add_to_cart' tool
+ * 3. Tavus sends 'conversation.tool_call' event via Daily.js app-message
+ * 4. This component receives the event and executes the function
+ * 5. This component sends 'conversation.echo' response back to Tavus
+ * 6. AI speaks the result: "I added bananas to your cart!"
+ */
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
@@ -13,18 +30,21 @@ declare global {
   }
 }
 
+/**
+ * Singleton pattern for Daily.js call object.
+ * We reuse the same call object to avoid creating multiple connections.
+ */
 const getOrCreateCallObject = () => {
-  // Use a property on window to store the singleton
   if (typeof window !== 'undefined' && !window._dailyCallObject) {
     window._dailyCallObject = DailyIframe.createCallObject()
   }
   return window._dailyCallObject
 }
 
-// Define video box sizes
+// Video box size presets for the resizable interface
 const VIDEO_SIZES = {
   small: { width: 120, height: 120 },
-  medium: { width: 176, height: 176 }, // 44 * 4 = 176 (original size)
+  medium: { width: 176, height: 176 },
   large: { width: 240, height: 240 },
   xlarge: { width: 320, height: 320 }
 } as const
@@ -32,23 +52,51 @@ const VIDEO_SIZES = {
 type VideoSize = keyof typeof VIDEO_SIZES
 
 interface VideoBoxProps {
+  /** The Daily.js room URL returned by Tavus API when creating a conversation */
   conversationUrl?: string | null
+  /** Whether the conversation is still being created */
   isLoading?: boolean
+  /** Callback to add items to cart - called by tool call handler */
   onAddToCart: (item: ShoppingItem, quantity: number) => void
 }
 
 export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: VideoBoxProps) {
+  // ============================================
+  // STATE
+  // ============================================
+  
+  // UI state for the draggable/resizable video box
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
+  const [videoSize, setVideoSize] = useState<VideoSize>('medium')
+  
+  // Daily.js state
   const [remoteParticipants, setRemoteParticipants] = useState<Record<string, any>>({})
   const [isConnected, setIsConnected] = useState(false)
-  const [videoSize, setVideoSize] = useState<VideoSize>('medium')
+  
+  // Refs for drag handling and Daily.js call object
   const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null)
   const callRef = useRef<any>(null)
   const handleToolCallRef = useRef<any>(null)
 
-  // Handle tool calls directly in component
+  // ============================================
+  // TOOL CALL HANDLER - THE CORE OF THIS DEMO
+  // ============================================
+  
+  /**
+   * Handles tool call events from Tavus AI.
+   * 
+   * When the AI decides to call a tool (based on user speech), Tavus sends
+   * a 'conversation.tool_call' event with:
+   * - conversation_id: To identify which conversation to respond to
+   * - properties.name: The tool name (e.g., 'add_to_cart')
+   * - properties.arguments: JSON string with the tool parameters
+   * 
+   * After processing, we MUST send a 'conversation.echo' response so the
+   * AI knows what happened and can speak the result to the user.
+   */
   const handleToolCall = useCallback(async (event: any) => {
+    // Extract data from the tool call event
     const { conversation_id, properties } = event.data
     const { name, arguments: args } = properties
     
@@ -57,27 +105,37 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
     let result: string
     
     try {
+      // Parse the JSON arguments string into an object
       const parsedArgs = JSON.parse(args)
       console.log('📝 Parsed arguments:', parsedArgs)
 
+      // Handle different tool types - add more cases here for additional tools
       switch (name) {
         case 'add_to_cart':
-          // Search for the item
+          // ========================================
+          // ADD TO CART TOOL IMPLEMENTATION
+          // ========================================
+          
+          // Search for the item in our product catalog
+          // Uses fuzzy matching to handle variations like "bananas" vs "Fresh Bananas"
           const foundItem = shoppingItems.find(item => 
             item.name.toLowerCase().includes(parsedArgs.item_name.toLowerCase()) ||
             parsedArgs.item_name.toLowerCase().includes(item.name.toLowerCase())
           )
           
           if (!foundItem) {
+            // Item not found - let the AI know so it can tell the user
             result = `Hey, I'm not able to find "${parsedArgs.item_name}" in our store. Could you try a different item name?`
           } else {
-            // Add to cart
+            // Item found! Add it to cart and confirm
             onAddToCart(foundItem, parsedArgs.quantity || 1)
             const quantityText = (parsedArgs.quantity || 1) > 1 ? ` (${parsedArgs.quantity} items)` : ''
             result = `Great! I added ${foundItem.name}${quantityText} to your cart each for $${foundItem.price.toFixed(2)}.`
           }
           break
+          
         default:
+          // Unknown tool - this shouldn't happen if persona is configured correctly
           result = `Unknown function: ${name}`
       }
     } catch (error) {
@@ -85,7 +143,22 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
       result = `Error processing ${name}: ${error instanceof Error ? error.message : 'Unknown error'}`
     }
 
-    // Send response back to Tavus
+    // ========================================
+    // SEND RESPONSE BACK TO TAVUS
+    // ========================================
+    
+    /**
+     * CRITICAL: We must send a 'conversation.echo' response so the AI
+     * knows the result of the tool call and can speak it to the user.
+     * 
+     * The response format:
+     * - message_type: 'conversation'
+     * - event_type: 'conversation.echo'
+     * - conversation_id: Same ID from the tool call event
+     * - properties.modality: 'text' (the AI will speak this text)
+     * - properties.text: The result message
+     * - properties.done: true (indicates the response is complete)
+     */
     if (callRef.current) {
       console.log('📤 Sending echo response:', result)
       callRef.current.sendAppMessage({
@@ -101,15 +174,18 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
     }
   }, [onAddToCart])
 
-  // Update the ref when handleToolCall changes
+  // Keep ref updated so event listener always has latest handler
   useEffect(() => {
     handleToolCallRef.current = handleToolCall
   }, [handleToolCall])
 
-  // Get current video dimensions
+  // ============================================
+  // VIDEO BOX POSITIONING & SIZING (UI Logic)
+  // ============================================
+  
   const currentSize = VIDEO_SIZES[videoSize]
 
-  // Initialize position on client side (right side by default) - only once on mount
+  // Position video box in bottom-right corner on initial load
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setPosition({ 
@@ -117,9 +193,9 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
         y: window.innerHeight - VIDEO_SIZES.medium.height - 20 
       })
     }
-  }, []) // Remove currentSize dependency to prevent position reset
+  }, [])
 
-  // Adjust position when size changes to keep video in bounds
+  // Keep video in bounds when resized
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setPosition(prevPosition => {
@@ -134,7 +210,7 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
     }
   }, [currentSize])
 
-  // Resize functions
+  // Size control functions
   const increaseSize = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     const sizes: VideoSize[] = ['small', 'medium', 'large', 'xlarge']
@@ -153,16 +229,27 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
     }
   }, [videoSize])
 
-  // Daily.js integration for Tavus conversation
+  // ============================================
+  // DAILY.JS CONNECTION & EVENT HANDLING
+  // ============================================
+  
+  /**
+   * Main Daily.js setup effect.
+   * 
+   * This connects to the Tavus conversation and sets up event listeners for:
+   * 1. Participant events (to render video/audio)
+   * 2. App messages (to receive tool calls from the AI)
+   */
   useEffect(() => {
     if (!conversationUrl || typeof window === 'undefined') return
 
+    // Get or create the Daily.js call object (singleton)
     const call = getOrCreateCallObject()
     callRef.current = call
 
     let isJoining = false
 
-    // Join meeting
+    // Join the Daily.js room (which is the Tavus conversation)
     const joinMeeting = async () => {
       if (isJoining) return
       isJoining = true
@@ -171,7 +258,6 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
         const meetingState = call.meetingState()
         
         if (meetingState === 'joined-meeting') {
-          // Already connected, just update state
           console.log('Already connected to meeting')
           setIsConnected(true)
         } else {
@@ -189,7 +275,7 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
 
     joinMeeting()
 
-    // Handle remote participants
+    // Track remote participants (the Tavus avatar)
     const updateRemoteParticipants = () => {
       const participants = call.participants()
       const remotes: Record<string, any> = {}
@@ -199,42 +285,55 @@ export function VideoBox({ conversationUrl, isLoading = false, onAddToCart }: Vi
       setRemoteParticipants(remotes)
     }
 
+    // Subscribe to participant events
     call.on('participant-joined', updateRemoteParticipants)
     call.on('participant-updated', updateRemoteParticipants)
     call.on('participant-left', updateRemoteParticipants)
     
-    // Listen for app messages and handle tool calls directly
+    /**
+     * APP MESSAGE LISTENER - This is where tool calls are received!
+     * 
+     * Tavus sends tool calls via Daily.js 'app-message' events.
+     * We filter for 'conversation.tool_call' events and handle them.
+     */
     const handleAppMessage = (event: any) => {
-      // Handle tool calls directly
       if (event.data && event.data.event_type === 'conversation.tool_call') {
         console.log('📱 RAW TOOL CALL DATA:', event)
+        // Call our tool handler (via ref to avoid stale closures)
         handleToolCallRef.current(event)
       }
     }
     
     call.on('app-message', handleAppMessage)
 
-    // Cleanup
+    // Cleanup on unmount
     return () => {
       call.off('participant-joined', updateRemoteParticipants)
       call.off('participant-updated', updateRemoteParticipants)
       call.off('participant-left', updateRemoteParticipants)
       call.off('app-message', handleAppMessage)
-      // Don't leave the call since we're using a singleton
       setIsConnected(false)
       setRemoteParticipants({})
     }
-  }, [conversationUrl]) // Removed handleToolCall from dependencies
+  }, [conversationUrl])
 
-  // Attach remote video and audio tracks
+  // ============================================
+  // VIDEO/AUDIO TRACK ATTACHMENT
+  // ============================================
+  
+  /**
+   * Attach video and audio tracks from the Tavus avatar to HTML elements.
+   * This runs whenever remoteParticipants changes (when tracks become available).
+   */
   useEffect(() => {
     Object.entries(remoteParticipants).forEach(([id, p]) => {
-      // Video
+      // Attach video track to <video> element
       const videoEl = document.getElementById(`remote-video-${id}`) as HTMLVideoElement
       if (videoEl && p.tracks?.video && p.tracks.video.state === 'playable' && p.tracks.video.persistentTrack) {
         videoEl.srcObject = new MediaStream([p.tracks.video.persistentTrack])
       }
-      // Audio
+      
+      // Attach audio track to <audio> element (for the AI's voice)
       const audioEl = document.getElementById(`remote-audio-${id}`) as HTMLAudioElement
       if (audioEl && p.tracks?.audio && p.tracks.audio.state === 'playable' && p.tracks.audio.persistentTrack) {
         audioEl.srcObject = new MediaStream([p.tracks.audio.persistentTrack])

@@ -1,3 +1,16 @@
+/**
+ * Shopping Items Data
+ * 
+ * This is the product catalog for the shopping assistant demo.
+ * 
+ * These items are:
+ * 1. Displayed in the UI as product cards
+ * 2. Passed to Tavus as conversational_context (so the AI knows what's available)
+ * 3. Used by the add_to_cart tool handler to find items by name
+ * 
+ * To add new products, simply add them to this array. The AI will automatically
+ * know about them through the conversational context.
+ */
 import { ShoppingItem } from '@/types/shopping'
 
 export const shoppingItems: ShoppingItem[] = [
