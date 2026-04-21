@@ -65,7 +65,7 @@ A [Tavus Persona](https://docs.tavus.io/sections/conversational-video-interface/
 
 **With Tavus's APIs, you can:**
 
-- **Create a Persona**: Start with Santa or create a completely new character (make sure to include santa's Replica ID: `r3fbe3834a3e` in your new Persona). Create a new Persona [via API](https://docs.tavus.io/api-reference/personas/create-persona) via API or in the [Tavus Platform](https://platform.tavus.io/personas/create).
+- **Create a Persona**: Start with Santa or create a completely new character (make sure to include santa's Replica ID: `r3fbe3834a3e` in your new Persona). Create a new Persona [via API](https://docs.tavus.io/api-reference/personas/create-persona) or in the [Tavus Platform](https://platform.tavus.io/personas/create).
 - **Customize**: Edit your Persona’s greeting, conversation context, and more.  
 - **Deploy**: Integrate the demo into any React project for a scalable experience.
 
