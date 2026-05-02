@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tavus CVI Chat-Only Example</title>
+  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="header-container">
+    <h1>Tavus CVI Chat-Only Example</h1>
+    <div class="description">
+      <p>Text-only chat interface for Tavus Replicas</p>
+      <div class="links">
+        <a href="https://docs.tavus.io/sections/event-schemas/conversation-respond">Learn more</a>
+        <span class="separator">|</span>
+        <a href="https://github.com/andy-tavus/text_chat_only_cvi">View Source Code</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="instructions-container">
+      <h2>Getting Started</h2>
+      <ol>
+        <li>Generate a conversation using the <a href="https://docs.tavus.io/api-reference/conversations/create-conversation" target="_blank">Create Conversation API</a> or <a href="https://platform.tavus.io">platform</a></li>
+        <li>Enter your conversation ID below</li>
+        <li>Click to Start Chat</li>
+      </ol>
+      <div class="conversation-input">
+        <input type="text" id="conversation-id-input" placeholder="Enter conversation ID (e.g., c123abc)" />
+        <small class="note">Note: You can also append <code>?conversation_id=YOUR_ID</code> to the URL</small>
+      </div>
+      <button id="start-btn">Start Chat</button>
+    </div>
+    
+    <div class="video-section">
+      <div id="video-container">
+        <video id="participant-video" autoplay playsinline></video>
+      </div>
+      <div id="chat-box">
+        <input type="text" id="chat-input" placeholder="Type your message and hit Enter..." />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let callObject = null;
+    let currentConversationId = null;
+
+    // Extract conversation_id from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlConversationId = urlParams.get('conversation_id');
+
+    // Function to update URL with new conversation ID
+    function updateUrlWithConversationId(id) {
+      const newUrl = new URL(window.location.href);
+      if (id) {
+        newUrl.searchParams.set('conversation_id', id);
+      } else {
+        newUrl.searchParams.delete('conversation_id');
+      }
+      window.history.replaceState({}, '', newUrl);
+    }
+
+    // Function to update input field with conversation ID
+    function updateInputWithConversationId(id) {
+      document.getElementById('conversation-id-input').value = id || '';
+    }
+
+    // If conversation ID exists in URL, populate the input field
+    if (urlConversationId) {
+      updateInputWithConversationId(urlConversationId);
+    }
+
+    // Listen for changes in the input field
+    document.getElementById('conversation-id-input').addEventListener('input', (event) => {
+      const newId = event.target.value.trim();
+      updateUrlWithConversationId(newId);
+    });
+
+    // Start Chat Button Listener
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const conversationId = document.getElementById('conversation-id-input').value.trim();
+      if (!conversationId) {
+        alert('Please enter a conversation ID');
+        return;
+      }
+      joinNewRoom(conversationId);
+    });
+
+    function joinNewRoom(conversationId) {
+      currentConversationId = conversationId;
+      joinRoom(conversationId);
+      updateUIForChat();
+    }
+
+    function updateUIForChat() {
+      document.getElementById('start-btn').style.display = 'none';
+      document.getElementById('video-container').style.display = 'flex';
+      document.getElementById('chat-box').style.display = 'flex';
+    }
+
+    function joinRoom(conversationId) {
+      if (callObject) {
+        callObject.leave();
+      }
+
+      // Create the call object with simpler configuration
+      callObject = DailyIframe.createCallObject();
+
+      // Set up app message listener
+      callObject.on('app-message', (message) => {
+        console.log('Received app-message:', message);
+      });
+
+      // Join the room
+      callObject.join({ 
+        url: `https://tavus.daily.co/${conversationId}`,
+        userName: "Guest"
+      })
+      .then(() => {
+        console.log(`Successfully joined room: ${conversationId}`);
+        // Add a delay before checking for participants
+        setTimeout(() => {
+          checkForExistingParticipant();
+        }, 1500);
+      })
+      .catch((err) => {
+        console.error('Error joining the room:', err);
+        alert('Failed to join the call. Please check the conversation ID.');
+        // Reset UI on error
+        document.getElementById('start-btn').style.display = 'block';
+        document.getElementById('video-container').style.display = 'none';
+        document.getElementById('chat-box').style.display = 'none';
+      });
+    }
+
+    function checkForExistingParticipant() {
+      const participants = callObject.participants();
+      console.log('Participants:', participants);
+
+      const existingParticipant = Object.values(participants).find(
+        (participant) => participant.local === false
+      );
+
+      if (existingParticipant) {
+        console.log(`Existing participant found: ${existingParticipant.user_id}`);
+
+        // Subscribe to the participant's video and audio tracks
+        if (existingParticipant.tracks.video.state === 'playable') {
+          const videoElement = document.getElementById('participant-video');
+          videoElement.srcObject = new MediaStream([existingParticipant.tracks.video.persistentTrack]);
+        } else {
+          console.log('No playable video track for existing participant.');
+        }
+
+        if (existingParticipant.tracks.audio.state === 'playable') {
+          const audioStream = new MediaStream([existingParticipant.tracks.audio.persistentTrack]);
+          const audio = new Audio();
+          audio.srcObject = audioStream;
+          audio.autoplay = true;
+        } else {
+          console.log('No playable audio track for existing participant.');
+        }
+      } else {
+        console.log('No existing participant found.');
+      }
+    }
+
+    // Chat input logic
+    document.getElementById('chat-input').addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        const message = event.target.value.trim();
+        if (message) {
+          sendAppMessage(message);
+          event.target.value = ''; // Clear input box
+        }
+      }
+    });
+
+    function sendAppMessage(message) {
+      if (!callObject) {
+        console.error('Call object is not initialized.');
+        return;
+      }
+
+      const payload = {
+        message_type: "conversation",
+        event_type: "conversation.respond",
+        conversation_id: currentConversationId,
+        properties: {
+          text: message
+        }
+      };
+
+      try {
+        callObject.sendAppMessage(payload);
+        console.log('Message sent:', payload);
+      } catch (error) {
+        console.error('Failed to send app message:', error);
+      }
+    }
+  </script>
+</body>
+</html>

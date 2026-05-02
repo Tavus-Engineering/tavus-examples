@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily.js/Tavus - Subscribe to Replica's Video & Audio Streams</title>
+  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+  <style>
+    body {	
+	  font-family: Arial, sans-serif;
+	  margin: 20px;
+    }
+    #video-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    video {
+      background: black;
+	  width: 50%; /* Set width to 50% of the container */
+	  height: auto;
+	  margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daily.js/Tavus</h1>
+  <h2>Subscribe to Replica's Video & Audio Streams</h2>
+  <h3>Allows you to avoid "Join" screen. Note that user will still need to allow mic/camera access in browser.</h3>
+<h3><a href="https://github.com/andy-tavus/join_raw_stream/">GO TO CODE</a></h3>
+  <label for="room-url">Enter Room URL:</label>
+  <input type="text" id="room-url" placeholder="https://tavus.daily.co/c123456abcde" style="width: 300px;">
+  <button id="join-btn">JOIN</button>
+  
+  <div id="video-container">
+    <video id="participant-video" autoplay playsinline></video>
+  </div>
+  
+  <script>
+    let callObject = null;
+
+    document.getElementById('join-btn').addEventListener('click', async () => {
+      const roomUrl = document.getElementById('room-url').value;
+
+      if (!roomUrl) {
+        alert('Please enter a valid room URL.');
+        return;
+      }
+
+      // Create the call object
+      callObject = DailyIframe.createCallObject();
+
+      // Join the room
+      try {
+        await callObject.join({ 
+          url: roomUrl,
+          userName: "Local" // Specify the name of the joining participant (local user). This should NOT be "Guest"
+        });
+        console.log('Joined the call successfully');
+
+        // Add a delay before checking for participants
+        setTimeout(() => {
+          checkForExistingParticipant();
+        }, 1500); // Wait for 1.5 seconds before checking
+      } catch (error) {
+        console.error('Error joining the call:', error);
+        alert('Failed to join the call. Please check the room URL.');
+      }
+    });
+
+    function checkForExistingParticipant() {
+      const participants = callObject.participants();
+      console.log('Participants:', participants);
+
+      const existingParticipant = Object.values(participants).find(
+        (participant) => participant.local === false
+      );
+
+      if (existingParticipant) {
+        console.log(`Existing participant found: ${existingParticipant.user_id}`);
+
+        // Subscribe to the participant's video and audio tracks
+        if (existingParticipant.tracks.video.state === 'playable') {
+          const videoElement = document.getElementById('participant-video');
+          videoElement.srcObject = new MediaStream([existingParticipant.tracks.video.persistentTrack]);
+        } else {
+          console.log('No playable video track for existing participant.');
+        }
+
+        if (existingParticipant.tracks.audio.state === 'playable') {
+          const audioStream = new MediaStream([existingParticipant.tracks.audio.persistentTrack]);
+          const audio = new Audio();
+          audio.srcObject = audioStream;
+          audio.autoplay = true;
+        } else {
+          console.log('No playable audio track for existing participant.');
+        }
+      } else {
+        console.log('No existing participant found.');
+      }
+    }
+  </script>
+</body>
+</html>

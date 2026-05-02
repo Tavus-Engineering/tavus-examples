@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily.js/Tavus - Green Screen Removal</title>
+  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #video-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+    canvas { width: 50%; height: auto; margin: 10px 0; }
+    #color-picker-container { text-align: left; margin-bottom: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Tavus CVI Green Screen Sample App</h1>
+  <a href="https://github.com/andy-tavus/CVI-greenscreen-webGL/">README/SOURCE</a>
+  <h3>Subscribes to Replica's Video & Audio Streams</h3>
+  <h3>Applies WebGL Chroma Key Green Screen Transparency</h3>
+  INSTRUCTIONS: <br><br>
+  1. Create conversation with <a href="https://docs.tavus.io/api-reference/conversations/create-conversation#body-properties-apply-greenscreen">"apply_greenscreen" property</a> set to true.<br>
+  2. Enter room URL and click join. The replica's video/audio feed should display with background transparent.<br>
+  3. Experiment with changing the background color of the page to see what the replica looks like against different colors.<br><br>
+<hr style="height: 5px; background: black; border: none;"><br>  
+<label for="room-url">Enter Room URL:</label>
+  <input type="text" id="room-url" placeholder="https://tavus.daily.co/c123456abcde" style="width: 300px;">
+  <button id="join-btn">JOIN</button>
+  <div id="color-picker-container">
+    <label for="color-picker">Select Page Background Color:</label>
+    <input type="color" id="color-picker" value="#ffffff">
+  </div>
+  <div id="video-container">
+    <canvas id="canvas"></canvas>
+  </div>
+  
+  <script>
+    let callObject = null;
+    const video = document.createElement('video');
+    video.autoplay = true;
+    video.playsInline = true;
+    video.style.display = 'none';
+    document.body.appendChild(video);
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('color-picker');
+    
+    // Event listener to change page background color dynamically
+    colorPicker.addEventListener('input', (event) => {
+      document.body.style.backgroundColor = event.target.value;
+    });
+    
+    document.getElementById('join-btn').addEventListener('click', async () => {
+      const roomUrl = document.getElementById('room-url').value;
+      if (!roomUrl) {
+        alert('Please enter a valid room URL.');
+        return;
+      }
+
+      // Create a Daily call object for managing the video call
+      callObject = DailyIframe.createCallObject();
+      try {
+        await callObject.join({ url: roomUrl, userName: "Local" });
+        console.log('Joined the call successfully');
+        setTimeout(checkForExistingParticipant, 1500);
+      } catch (error) {
+        console.error('Error joining the call:', error);
+        alert('Failed to join the call. Please check the room URL.');
+      }
+    });
+
+    // Function to locate and subscribe to the replica's tracks
+    function checkForExistingParticipant() {
+      const participants = callObject.participants();
+      const existingParticipant = Object.values(participants).find(p => !p.local);
+      
+      if (existingParticipant) {
+        console.log(`Existing participant found: ${existingParticipant.user_id}`);
+        
+        // Subscribe to the replica's video stream and process it for green screen removal
+        if (existingParticipant.tracks.video.state === 'playable') {
+          video.srcObject = new MediaStream([existingParticipant.tracks.video.persistentTrack]);
+          video.onloadedmetadata = () => applyGreenScreen();
+        }
+        
+        // Subscribe to the replica's audio stream to play it in real-time
+        if (existingParticipant.tracks.audio.state === 'playable') {
+          const audio = new Audio();
+          audio.srcObject = new MediaStream([existingParticipant.tracks.audio.persistentTrack]);
+          audio.autoplay = true;
+        }
+      }
+    }
+
+    // Function to apply chroma key transparency using WebGL
+    function applyGreenScreen() {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      function renderFrame() {
+        if (!video.videoWidth || !video.videoHeight) {
+          requestAnimationFrame(renderFrame);
+          return;
+        }
+        
+        // Draw the current video frame onto the canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Extract pixel data and apply transparency to green pixels
+        const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = frame.data;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
+          if (Math.abs(r - 0) < 40 && Math.abs(g - 255) < 40 && Math.abs(b - 155) < 40) { // Adjust tolerance
+            pixels[i + 3] = 0; // Set alpha transparency
+          }
+        }
+        
+        // Update the canvas with processed frame data
+        ctx.putImageData(frame, 0, 0);
+        requestAnimationFrame(renderFrame);
+      }
+      renderFrame();
+    }
+  </script>
+</body>
+</html>

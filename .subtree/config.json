@@ -1,0 +1,44 @@
+{
+  "subtrees": [
+    {
+      "directory": "examples/CVI-greenscreen-webGL",
+      "repository": "https://github.com/andy-tavus/CVI-greenscreen-webGL.git",
+      "branch": "main"
+    },
+    {
+      "directory": "examples/interactions-protocol-playground", 
+      "repository": "https://github.com/andy-tavus/interactions-protocol-playground.git",
+      "branch": "main"
+    },
+    {
+      "directory": "examples/join_raw_stream",
+      "repository": "https://github.com/andy-tavus/join_raw_stream.git", 
+      "branch": "main"
+    },
+    {
+      "directory": "examples/microphone-only-cvi",
+      "repository": "https://github.com/andy-tavus/microphone-only-cvi.git",
+      "branch": "main"
+    },
+    {
+      "directory": "examples/red_or_black",
+      "repository": "https://github.com/andy-tavus/red_or_black.git",
+      "branch": "main"
+    },
+    {
+      "directory": "examples/start-stop-recording",
+      "repository": "https://github.com/andy-tavus/start-stop-recording.git",
+      "branch": "main"
+    },
+    {
+      "directory": "examples/text_chat_only_cvi",
+      "repository": "https://github.com/andy-tavus/text_chat_only_cvi.git",
+      "branch": "main"
+    },
+    {
+      "directory": "examples/custom_ending_message",
+      "repository": "https://github.com/andy-tavus/custom_ending_message.git",
+      "branch": "main"
+    }
+  ]
+}

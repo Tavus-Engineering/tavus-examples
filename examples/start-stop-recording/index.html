@@ -63,9 +63,17 @@
       flex-direction: row;    /* Ensure buttons are laid out horizontally */
       gap: 10px;              /* Add spacing between buttons */
     }
+    .source-link {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
+  <h1>Tavus Conversation with Recording</h1>
+  <div class="source-link">
+    <a href="https://github.com/andy-tavus/start-stop-recording" target="_blank">Source</a>
+  </div>
+  
   <div id="instructions">
     <a onclick="toggleInstructions()">Setup Instructions (Expand/Collapse)</a>
     <div id="instructions-content">
@@ -94,7 +102,6 @@
     </div>
   </div>
 
-  <h1>Tavus Conversation with Recording</h1>
   <input id="Conversation-url" type="text" placeholder="Enter your Tavus Conversation URL" />
   <button id="join-Conversation">Join</button>
   <div class="button-container">
