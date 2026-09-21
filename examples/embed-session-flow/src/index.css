@@ -1,0 +1,408 @@
+:root {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --ink: #0f172a;
+  --ink-soft: #55607a;
+  --line: #e3e7f0;
+  --accent: #1d4ed8;
+  --accent-ink: #ffffff;
+  --danger: #dc2626;
+  --font: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+h1,
+h2 {
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+button {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  padding: 0.7rem 1.1rem;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.9rem 1.4rem;
+}
+
+button.danger:not(:disabled) {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+button.ghost {
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 64px;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--accent);
+}
+
+.topbar-note {
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.page {
+  min-height: calc(100vh - 64px);
+  padding: clamp(1rem, 4vw, 2.5rem);
+}
+
+.page[data-screen="intro"],
+.page[data-screen="summary"] {
+  display: grid;
+  place-items: start center;
+  background:
+    radial-gradient(800px 400px at 50% 0%, rgba(29, 78, 216, 0.08), transparent 70%),
+    var(--bg);
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lede {
+  margin: 0.75rem 0 0;
+  color: var(--ink-soft);
+}
+
+.intro {
+  width: min(560px, 100%);
+  padding-top: clamp(2rem, 8vh, 6rem);
+  text-align: center;
+}
+
+.intro h1 {
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  font-weight: 800;
+}
+
+.intro-form {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.intro-form label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.intro-form input {
+  font: inherit;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.intro-form input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.intro-form .primary {
+  margin-top: 0.5rem;
+}
+
+.call {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.call[hidden] {
+  display: none;
+}
+
+.stage {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0b1020;
+  box-shadow: 0 30px 60px -40px rgba(15, 23, 42, 0.5);
+}
+
+.stage tavus-embed {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  height: 100%;
+  max-height: calc(100vh - 64px - 5rem);
+  padding: 1rem;
+  border-radius: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.sidebar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar h2 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+.pill[data-live="true"] .dot {
+  background: var(--danger);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.transcript {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  overflow: auto;
+  flex: 1;
+}
+
+.transcript li {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.transcript .who {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.transcript li[data-role="replica"] .who {
+  color: var(--accent);
+}
+
+.transcript p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.transcript-empty {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.summary {
+  width: min(720px, 100%);
+  padding-top: clamp(1.5rem, 6vh, 4rem);
+  text-align: center;
+}
+
+.summary h1 {
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  font-weight: 800;
+}
+
+.summary .card {
+  margin: 2rem 0 1.25rem;
+  padding: 1.25rem;
+  border-radius: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  text-align: left;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.card-head .eyebrow {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.summary .transcript {
+  max-height: 46vh;
+}
+
+.summary .primary {
+  width: 100%;
+}
+
+.build {
+  width: min(1100px, 100% - 2rem);
+  margin: 0 auto;
+  padding: 3rem 0 4rem;
+}
+
+.prompt-head {
+  max-width: 640px;
+  margin-bottom: 1.5rem;
+}
+
+.prompt-head h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+}
+
+.prompt-head p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.prompt-card {
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.prompt-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.prompt-tabs {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.prompt-tabs button,
+.copy {
+  font-size: 0.9rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+.prompt-tabs button[aria-selected="true"] {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.copy {
+  margin-left: auto;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.copy:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.prompt-card pre {
+  margin: 0;
+  padding: 1.4rem 1.5rem 1.6rem;
+  white-space: pre-wrap;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (max-width: 960px) {
+  .call {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    max-height: none;
+  }
+}
