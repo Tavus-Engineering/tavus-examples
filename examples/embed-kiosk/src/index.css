@@ -1,0 +1,308 @@
+:root {
+  --bg: #0b0a0f;
+  --panel: #14121b;
+  --ink: #f4f1f7;
+  --ink-dim: #9b95a8;
+  --line: rgba(244, 241, 247, 0.12);
+  --accent: #f3a6c3;
+  --accent-ink: #2a0f1b;
+  --font: "Manrope", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* The embed's portrait layout and its type scale follow rem, so a kiosk that
+   grows its root size with the screen gets a bigger card and bigger controls
+   without leaving the element's native shape. */
+html {
+  font-size: clamp(16px, 1.35dvh, 28px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.kiosk {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* A 9:16 totem. Fills a portrait screen; on a landscape monitor it sits centered
+   at full height with black at the sides, like the device it is meant for. */
+.totem {
+  position: relative;
+  height: 100dvh;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1rem, 4cqw, 2.5rem);
+  container-type: inline-size;
+  background:
+    radial-gradient(90% 40% at 50% 12%, rgba(243, 166, 195, 0.16), transparent 70%),
+    linear-gradient(180deg, #17131f 0%, var(--bg) 45%, var(--bg) 100%);
+  color: var(--ink);
+}
+
+.totem-top,
+.totem-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand {
+  font-weight: 800;
+  font-size: clamp(1rem, 5cqw, 1.5rem);
+  letter-spacing: -0.02em;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: clamp(0.6rem, 2.6cqw, 0.8rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.card-frame {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding: 6cqw 0;
+}
+
+/* The embed switches to its own portrait layout under 28rem of width, so the
+   card stays just below that and keeps the native 9:16 shape. */
+.card {
+  position: relative;
+  width: min(100%, 27rem, 60dvh * 9 / 16);
+  margin: 0 auto;
+  aspect-ratio: 9 / 16;
+  border-radius: clamp(12px, 4cqw, 24px);
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+  transition: aspect-ratio 400ms ease;
+}
+
+.card tavus-embed {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.greeting {
+  padding: 6cqw 6cqw 0;
+  text-align: center;
+}
+
+.greeting h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.8rem, 11cqw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.greeting p {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: clamp(0.9rem, 3.6cqw, 1.2rem);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3ddc84;
+}
+
+.status[data-phase="loading"] .dot,
+.status[data-phase="wrapping-up"] .dot {
+  background: #ffc247;
+}
+
+.status[data-phase="in-call"] .dot {
+  background: #ff5a5a;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.missing {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--ink-dim);
+}
+
+.missing code {
+  color: var(--ink);
+  font-size: 0.9em;
+}
+
+.chrome {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  display: flex;
+  gap: 0.5rem;
+  z-index: 5;
+}
+
+.chrome-btn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(11, 10, 15, 0.7);
+  backdrop-filter: blur(10px);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.chrome-btn:hover {
+  background: rgba(244, 241, 247, 0.12);
+}
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  overflow: auto;
+  padding: 3rem clamp(1rem, 6vw, 5rem) 4rem;
+  background: rgba(11, 10, 15, 0.96);
+  backdrop-filter: blur(16px);
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.drawer-close {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+}
+
+.prompt-head {
+  max-width: 640px;
+  margin-bottom: 2rem;
+}
+
+.prompt-head .eyebrow {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.prompt-head h2 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.prompt-head p {
+  margin: 0;
+  color: var(--ink-dim);
+}
+
+.prompt-card {
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.prompt-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.prompt-tabs {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.prompt-tabs button,
+.copy {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.prompt-tabs button[aria-selected="true"] {
+  background: rgba(244, 241, 247, 0.1);
+  color: var(--ink);
+}
+
+.copy {
+  margin-left: auto;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.copy:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.prompt-card pre {
+  margin: 0;
+  padding: 1.4rem 1.5rem 1.6rem;
+  white-space: pre-wrap;
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
