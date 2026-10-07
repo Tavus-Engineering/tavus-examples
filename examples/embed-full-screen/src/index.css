@@ -1,0 +1,388 @@
+:root {
+  --bg: #f4f3ef;
+  --panel: #ffffff;
+  --ink: #17191c;
+  --ink-soft: #5b6066;
+  --accent: #c2410c;
+  --accent-soft: rgba(194, 65, 12, 0.12);
+  --line: rgba(23, 25, 28, 0.12);
+  --font: "Sora", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 720px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: min(var(--measure), 100% - 3rem);
+  margin: 0 auto;
+  padding: 1.5rem 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.brand-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+.page {
+  width: min(var(--measure), 100% - 3rem);
+  margin: 0 auto;
+  padding: 3rem 0 5rem;
+}
+
+.intake,
+.next {
+  padding: 2.5rem 0 3.5rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4rem;
+}
+
+.lede {
+  margin: 0 0 2rem;
+  max-width: 560px;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+.form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.field input {
+  font: inherit;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.field input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.topics {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.topics legend {
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.topic {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "radio label"
+    "radio hint";
+  column-gap: 0.85rem;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.topic[data-selected="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.topic input {
+  grid-area: radio;
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.topic-label {
+  grid-area: label;
+  font-weight: 500;
+}
+
+.topic-hint {
+  grid-area: hint;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.primary {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.95rem 1.5rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* One element for the whole app. Hidden on the intake and done pages, it owns
+   the viewport on the call page; the page adds nothing but a way back. */
+.stage {
+  position: fixed;
+  inset: 0;
+  background: #000;
+}
+
+.stage[hidden] {
+  display: none;
+}
+
+.stage tavus-embed {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.call-chrome {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  z-index: 2;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.step-chip,
+.back {
+  font: inherit;
+  padding: 0.5rem 0.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+}
+
+.back {
+  cursor: pointer;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin: 0 0 2rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.summary div {
+  padding: 1rem 1.25rem;
+  background: var(--panel);
+}
+
+.summary dt {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.summary dd {
+  margin: 0.25rem 0 0;
+  font-weight: 600;
+}
+
+.steps {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+.steps li .mono {
+  color: var(--accent);
+}
+
+.steps li p {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.prompt-head {
+  max-width: 560px;
+  margin-bottom: 2rem;
+}
+
+.prompt-head h2 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.prompt-head p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.prompt-card {
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.prompt-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.prompt-source {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.copy {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.copy:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.prompt-card pre {
+  margin: 0;
+  padding: 1.4rem 1.5rem 1.6rem;
+  white-space: pre-wrap;
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .page,
+  .header {
+    width: calc(100% - 2rem);
+  }
+  .primary {
+    justify-self: stretch;
+  }
+  .summary {
+    grid-template-columns: 1fr;
+  }
+}
