@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Tavus × LiveKit — startup latency timeline</title>
+<style>
+  :root { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color: #111; }
+  body { margin: 0; padding: 20px; background: #f6f7f9; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  .row { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .card { background: #fff; border: 1px solid #e3e5e8; border-radius: 8px; padding: 14px; }
+  .controls label { display: inline-flex; align-items: center; gap: 6px; margin-right: 14px; font-size: 13px; }
+  button { padding: 8px 14px; border-radius: 6px; border: 1px solid #333; background: #111; color: #fff; cursor: pointer; font-size: 14px; }
+  button.secondary { background: #fff; color: #111; }
+  button:disabled { opacity: .5; cursor: default; }
+  video { background: #000; border-radius: 6px; display: block; }
+  table { border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 4px 10px; border-bottom: 1px solid #eee; text-align: left; white-space: nowrap; }
+  th { background: #fafafa; font-weight: 600; }
+  td.num { text-align: right; }
+  .fe { color: #0b57d0; }  .agent { color: #b3261e; }
+  .seg td:first-child { font-weight: 500; }
+  .muted { color: #777; font-size: 12px; }
+  pre { font-size: 11.5px; max-height: 260px; overflow: auto; background: #fafafa; padding: 8px; border-radius: 6px; }
+  #status { font-size: 13px; margin-left: 10px; }
+</style>
+</head>
+<body>
+<h1>Tavus × LiveKit — startup latency timeline</h1>
+
+<div class="card controls">
+  <label><input type="checkbox" id="adaptive" checked /> adaptiveStream (SDK picks simulcast layer from element size)</label>
+  <label><input type="checkbox" id="forceHigh" /> force VideoQuality.HIGH after subscribe</label>
+  <label>video element width
+    <select id="vidWidth">
+      <option value="320">320px (widget)</option>
+      <option value="640" selected>640px</option>
+      <option value="1280">1280px</option>
+    </select>
+  </label>
+  <br /><br />
+  <label><input type="checkbox" id="mic" checked /> publish microphone</label>
+  <label>microphone
+    <select id="micSelect"><option value="">default</option></select>
+    <button id="micRefresh" class="secondary" type="button" style="padding:3px 8px;font-size:12px">refresh</button>
+  </label>
+  <label><input type="checkbox" id="cam" /> publish camera</label>
+  <label>camera
+    <select id="camSelect"><option value="">default</option></select>
+    <button id="camRefresh" class="secondary" type="button" style="padding:3px 8px;font-size:12px">refresh</button>
+  </label>
+  <br /><br />
+  <button id="start">Start conversation</button>
+  <button id="stop" class="secondary" disabled>Disconnect</button>
+  <button id="muteMic" class="secondary" disabled>Mute mic</button>
+  <button id="toggleCam" class="secondary" disabled>Camera on</button>
+  <button id="export" class="secondary" disabled>Export JSON</button>
+  <span id="status" class="muted">idle</span>
+</div>
+
+<div class="row" style="margin-top:16px">
+  <div class="card">
+    <div class="muted" style="margin-bottom:4px">avatar</div>
+    <video id="video" width="640" height="360" autoplay playsinline muted></video>
+    <div class="muted" id="videoMeta" style="margin-top:6px">—</div>
+  </div>
+  <div class="card">
+    <div class="muted" style="margin-bottom:4px">you <span id="selfMeta"></span></div>
+    <video id="selfVideo" width="240" height="135" autoplay playsinline muted style="transform:scaleX(-1)"></video>
+  </div>
+
+  <div class="card">
+    <strong>Segments</strong>
+    <table id="segments"><thead><tr><th>segment</th><th>ms</th><th>source</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+
+<div class="row" style="margin-top:16px">
+  <div class="card">
+    <strong>Marks</strong> <span class="muted">(blue = browser, red = agent; agent clock is the worker's wall clock)</span>
+    <table id="marks"><thead><tr><th>mark</th><th>wallclock</th><th>Δ click</th><th>Δ prev</th><th>extra</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="card">
+    <strong>Video quality snapshots</strong> <span class="muted">(inbound-rtp at first frame, +5s, +10s, +15s)</span>
+    <table id="quality"><thead><tr><th>t</th><th>res</th><th>fps</th><th>codec</th><th>framesDropped</th><th>freezeCount</th><th>bytes</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <strong>Log</strong>
+  <pre id="log"></pre>
+</div>
+
+<script type="module">
+import {
+  Room, RoomEvent, Track, VideoQuality,
+} from "https://cdn.jsdelivr.net/npm/livekit-client@2/+esm";
+
+const $ = (id) => document.getElementById(id);
+const AVATAR_IDENTITY = "tavus-avatar-agent";
+const LATENCY_TOPIC = "latency";
+
+let room = null;
+let run = null;
+
+function log(msg) {
+  const el = $("log");
+  el.textContent += `${new Date().toISOString().slice(11, 23)}  ${msg}\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function newRun() {
+  return { marks: [], quality: [], firstMarked: new Set(), clickMs: null, room: null, conversation_id: null, avatarVideoSid: null };
+}
+
+function mark(name, extra = {}, source = "fe") {
+  const rec = { source, name, t_ms: Date.now(), ...extra };
+  run.marks.push(rec);
+  render();
+  return rec;
+}
+
+function markOnce(name, extra = {}) {
+  if (run.firstMarked.has(name)) return;
+  run.firstMarked.add(name);
+  mark(name, extra);
+}
+
+function t(name) {
+  const m = run.marks.find((x) => x.name === name);
+  return m ? m.t_ms : null;
+}
+function delta(a, b) {
+  const ta = t(a), tb = t(b);
+  return ta == null || tb == null ? null : tb - ta;
+}
+
+const SEGMENTS = [
+  ["click → /getToken response",              "fe.click",                        "fe.token_received",              "browser + our backend"],
+  ["token → room connected",                  "fe.token_received",               "fe.room_connected",              "browser ↔ LiveKit"],
+  ["room connected → agent job received",     "fe.room_connected",               "agent.job_received",             "LiveKit agent dispatch (cross-clock)"],
+  ["agent job → agent room connected",        "agent.job_received",              "agent.room_connected",           "agent worker"],
+  ["agent room connected → Tavus REST start", "agent.room_connected",            "agent.tavus_rest_start",         "agent init (STT/LLM/TTS setup)"],
+  ["Tavus REST  POST /v2/conversations",      "agent.tavus_rest_start",          "agent.tavus_rest_done",          "Tavus API"],
+  ["REST done → avatar participant joined",   "agent.tavus_rest_done",           "agent.avatar_participant_joined","Tavus renderer boot + LK join"],
+  ["avatar joined → avatar video published",  "agent.avatar_participant_joined", "agent.avatar_video_published",   "Tavus renderer first publish"],
+  ["REST done → browser SDP has video",       "agent.tavus_rest_done",           "fe.sdp_with_video",              "≈ customer's tavus_side_renderer_join_ms"],
+  ["browser SDP → TrackSubscribed",           "fe.sdp_with_video",               "fe.avatar_video_subscribed",     "browser ICE/negotiate"],
+  ["TrackSubscribed → first frame painted",   "fe.avatar_video_subscribed",      "fe.first_frame",                 "browser decode"],
+  ["first frame → avatar first speaking",     "fe.first_frame",                  "agent.first_speaking",           "greeting LLM+TTS (cross-clock)"],
+  ["TOTAL click → first frame",               "fe.click",                        "fe.first_frame",                 "user-perceived"],
+];
+
+function render() {
+  const tb = $("marks").querySelector("tbody");
+  const sorted = [...run.marks].sort((a, b) => a.t_ms - b.t_ms);
+  tb.innerHTML = "";
+  let prev = null;
+  for (const m of sorted) {
+    const tr = document.createElement("tr");
+    const { source, name, t_ms, ...extra } = m;
+    tr.innerHTML = `<td class="${source}">${name}</td>
+      <td>${new Date(t_ms).toISOString().slice(11, 23)}</td>
+      <td class="num">${run.clickMs != null ? t_ms - run.clickMs : ""}</td>
+      <td class="num">${prev != null ? t_ms - prev : ""}</td>
+      <td class="muted">${Object.keys(extra).length ? JSON.stringify(extra) : ""}</td>`;
+    tb.appendChild(tr);
+    prev = t_ms;
+  }
+  const sb = $("segments").querySelector("tbody");
+  sb.innerHTML = "";
+  for (const [label, a, b, src] of SEGMENTS) {
+    const d = delta(a, b);
+    const tr = document.createElement("tr");
+    tr.className = "seg";
+    tr.innerHTML = `<td>${label}</td><td class="num">${d == null ? "—" : d}</td><td class="muted">${src}</td>`;
+    sb.appendChild(tr);
+  }
+  const qb = $("quality").querySelector("tbody");
+  qb.innerHTML = "";
+  for (const q of run.quality) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>+${q.offset_s}s</td><td>${q.res}</td><td class="num">${q.fps ?? ""}</td><td>${q.codec ?? ""}</td>
+      <td class="num">${q.framesDropped ?? ""}</td><td class="num">${q.freezeCount ?? ""}</td><td class="num">${q.bytesReceived ?? ""}</td>`;
+    qb.appendChild(tr);
+  }
+}
+
+// --- Device selection (microphone + camera) ---------------------------------
+const DEVICES = {
+  mic: { kind: "audioinput", select: "micSelect", refresh: "micRefresh", label: "microphone" },
+  cam: { kind: "videoinput", select: "camSelect", refresh: "camRefresh", label: "camera" },
+};
+
+async function refreshDevices(which, requestPermission = false) {
+  const cfg = DEVICES[which];
+  const sel = $(cfg.select);
+  const current = sel.value;
+  try {
+    // requestPermission=true triggers a getUserMedia prompt so device labels are populated.
+    const devices = await Room.getLocalDevices(cfg.kind, requestPermission);
+    sel.innerHTML = `<option value="">default</option>`;
+    for (const d of devices) {
+      const opt = document.createElement("option");
+      opt.value = d.deviceId;
+      opt.textContent = d.label || `${cfg.label} ${sel.options.length}`;
+      sel.appendChild(opt);
+    }
+    if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+    log(`found ${devices.length} ${cfg.label}(s)`);
+  } catch (e) {
+    log(`could not enumerate ${cfg.label}s: ${e.message || e}`);
+  }
+}
+const refreshMics = (p) => refreshDevices("mic", p);
+const refreshCams = (p) => refreshDevices("cam", p);
+const selectedLabel = (which) => $(DEVICES[which].select).selectedOptions[0]?.textContent || "default";
+
+for (const which of Object.keys(DEVICES)) {
+  const cfg = DEVICES[which];
+  $(cfg.refresh).onclick = () => refreshDevices(which, true);
+  $(cfg.select).onchange = async () => {
+    if (!room || room.state !== "connected") return;
+    const id = $(cfg.select).value;
+    try {
+      await room.switchActiveDevice(cfg.kind, id || undefined);
+      mark(`fe.${which}_switched`, { [cfg.label]: selectedLabel(which) });
+      log(`switched ${cfg.label} → ${selectedLabel(which)}`);
+      if (which === "cam") { $("selfVideo").srcObject = null; syncSelfView(); } // re-attach new track
+    } catch (e) { log(`switchActiveDevice(${cfg.kind}) failed: ${e.message || e}`); }
+  };
+}
+navigator.mediaDevices?.addEventListener?.("devicechange", () => { refreshMics(false); refreshCams(false); });
+
+// --- Local media controls (mute mic / camera on-off / self-view) ------------
+function updateMediaButtons() {
+  const connected = room && room.state === "connected";
+  const lp = room?.localParticipant;
+  $("muteMic").disabled = !connected;
+  $("toggleCam").disabled = !connected;
+  if (!connected) { $("muteMic").textContent = "Mute mic"; $("toggleCam").textContent = "Camera on"; return; }
+  $("muteMic").textContent = lp.isMicrophoneEnabled ? "Mute mic" : "Unmute mic";
+  $("toggleCam").textContent = lp.isCameraEnabled ? "Camera off" : "Camera on";
+}
+
+$("muteMic").onclick = async () => {
+  if (!room) return;
+  const enable = !room.localParticipant.isMicrophoneEnabled;
+  try {
+    await room.localParticipant.setMicrophoneEnabled(enable);
+    mark(enable ? "fe.mic_unmuted" : "fe.mic_muted");
+    log(enable ? "mic unmuted" : "mic muted");
+  } catch (e) { log(`mic toggle failed: ${e.message || e}`); }
+  updateMediaButtons();
+};
+
+$("toggleCam").onclick = async () => {
+  if (!room) return;
+  const enable = !room.localParticipant.isCameraEnabled;
+  try {
+    await room.localParticipant.setCameraEnabled(enable);
+    mark(enable ? "fe.camera_on" : "fe.camera_off", enable ? { camera: selectedLabel("cam") } : {});
+    if (enable) refreshCams(false);
+    log(enable ? "camera on" : "camera off");
+  } catch (e) { log(`camera toggle failed: ${e.message || e}`); }
+  syncSelfView();
+  updateMediaButtons();
+};
+
+// Self-view: derive from the camera publication's current state rather than from
+// publish events — setCameraEnabled(false) mutes/stops the track but keeps the
+// publication, so re-enabling does not emit LocalTrackPublished again.
+function syncSelfView() {
+  const v = $("selfVideo");
+  const pub = room?.localParticipant?.getTrackPublication(Track.Source.Camera);
+  const track = pub?.track;
+  if (!track || pub.isMuted) {
+    if (v.srcObject) { track?.detach(v); v.srcObject = null; }
+    $("selfMeta").textContent = track ? "(camera off)" : "";
+    return;
+  }
+  if (!v.srcObject) {
+    track.attach(v);
+    v.play?.().catch(() => {});
+  }
+  const ms = track.mediaStreamTrack?.getSettings?.() || {};
+  $("selfMeta").textContent = ms.width ? `(${ms.width}x${ms.height})` : "";
+}
+
+// Patch setRemoteDescription so we can mark when the SDP describing the avatar's
+// video track arrives — the boundary between Tavus-side work and browser negotiation.
+(function patchSDP() {
+  const orig = RTCPeerConnection.prototype.setRemoteDescription;
+  RTCPeerConnection.prototype.setRemoteDescription = function (desc, ...rest) {
+    try {
+      const sdp = desc && desc.sdp;
+      if (run && sdp && !run.firstMarked.has("fe.sdp_with_video")) {
+        // Key on the avatar's video track SID (learned from TrackPublished), so the
+        // initial subscriber offer / our own publisher answer don't trigger it.
+        const sid = run.avatarVideoSid;
+        if (sid && sdp.includes(sid)) markOnce("fe.sdp_with_video", { sid });
+      }
+    } catch (_) {}
+    return orig.call(this, desc, ...rest);
+  };
+})();
+
+async function snapshotQuality(track, offset_s) {
+  try {
+    const report = await track.getRTCStatsReport();
+    if (!report) return;
+    let inbound = null;
+    const codecs = {};
+    report.forEach((s) => {
+      if (s.type === "codec") codecs[s.id] = s.mimeType;
+      if (s.type === "inbound-rtp" && s.kind === "video") inbound = s;
+    });
+    if (!inbound) return;
+    const q = {
+      offset_s,
+      res: `${inbound.frameWidth}x${inbound.frameHeight}`,
+      fps: inbound.framesPerSecond,
+      codec: codecs[inbound.codecId],
+      framesDropped: inbound.framesDropped,
+      freezeCount: inbound.freezeCount,
+      bytesReceived: inbound.bytesReceived,
+    };
+    run.quality.push(q);
+    log(`quality +${offset_s}s ${q.res} ${q.fps}fps ${q.codec} dropped=${q.framesDropped} freezes=${q.freezeCount}`);
+    render();
+  } catch (e) {
+    log(`getStats failed: ${e}`);
+  }
+}
+
+function attachVideo(track, publication) {
+  const video = $("video");
+  const w = parseInt($("vidWidth").value, 10);
+  video.width = w; video.height = Math.round(w * 9 / 16);
+  track.attach(video);
+
+  if ($("forceHigh").checked && publication?.setVideoQuality) {
+    publication.setVideoQuality(VideoQuality.HIGH);
+    log("setVideoQuality(HIGH) requested");
+  }
+
+  const onFirstFrame = () => {
+    markOnce("fe.first_frame", { videoWidth: video.videoWidth, videoHeight: video.videoHeight });
+    $("videoMeta").textContent = `decoded ${video.videoWidth}x${video.videoHeight}, element ${video.width}x${video.height}`;
+    for (const off of [0, 5, 10, 15]) setTimeout(() => snapshotQuality(track, off), off * 1000);
+  };
+  if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(onFirstFrame);
+  else video.addEventListener("loadeddata", onFirstFrame, { once: true });
+}
+
+async function start() {
+  run = newRun();
+  run.clickMs = Date.now();
+  $("log").textContent = "";
+  $("start").disabled = true; $("stop").disabled = false; $("export").disabled = false;
+  $("status").textContent = "requesting token…";
+  mark("fe.click");
+
+  const res = await fetch("/getToken");
+  const { url, token, room: roomName, identity } = await res.json();
+  run.room = roomName;
+  mark("fe.token_received", { room: roomName, identity });
+  $("status").textContent = `room ${roomName} — connecting…`;
+
+  const micId = $("micSelect").value;
+  const camId = $("camSelect").value;
+  room = new Room({
+    adaptiveStream: $("adaptive").checked,
+    dynacast: true,
+    audioCaptureDefaults: micId ? { deviceId: micId } : undefined,
+    videoCaptureDefaults: camId ? { deviceId: camId } : undefined,
+  });
+
+  room.on(RoomEvent.ParticipantConnected, (p) => {
+    if (p.identity === AVATAR_IDENTITY) markOnce("fe.avatar_participant_joined", { identity: p.identity });
+    else markOnce("fe.agent_participant_joined", { identity: p.identity });
+  });
+  room.on(RoomEvent.TrackPublished, (pub, p) => {
+    if (p.identity === AVATAR_IDENTITY && pub.kind === Track.Kind.Video) {
+      run.avatarVideoSid = pub.trackSid;
+      markOnce("fe.avatar_video_published", { sid: pub.trackSid });
+    }
+  });
+  room.on(RoomEvent.TrackSubscribed, (track, pub, p) => {
+    if (p.identity !== AVATAR_IDENTITY) return;
+    if (track.kind === Track.Kind.Video) {
+      markOnce("fe.avatar_video_subscribed", { sid: pub.trackSid });
+      attachVideo(track, pub);
+    } else if (track.kind === Track.Kind.Audio) {
+      markOnce("fe.avatar_audio_subscribed", { sid: pub.trackSid });
+      track.attach(); // audible
+    }
+  });
+  room.on(RoomEvent.DataReceived, (payload, participant, _kind, topic) => {
+    if (topic !== LATENCY_TOPIC) return;
+    try {
+      const rec = JSON.parse(new TextDecoder().decode(payload));
+      run.marks.push(rec);
+      if (rec.conversation_id) run.conversation_id = rec.conversation_id;
+      log(`agent mark ${rec.name}${rec.conversation_id ? " conv=" + rec.conversation_id : ""}`);
+      render();
+    } catch (e) { log(`bad latency payload: ${e}`); }
+  });
+  const onLocalMedia = () => { syncSelfView(); updateMediaButtons(); };
+  room.on(RoomEvent.LocalTrackPublished, onLocalMedia);
+  room.on(RoomEvent.LocalTrackUnpublished, onLocalMedia);
+  room.on(RoomEvent.TrackMuted, (pub, p) => { if (p === room.localParticipant) onLocalMedia(); });
+  room.on(RoomEvent.TrackUnmuted, (pub, p) => { if (p === room.localParticipant) onLocalMedia(); });
+  room.on(RoomEvent.Disconnected, (reason) => {
+    log(`disconnected: ${reason}`); $("status").textContent = "disconnected";
+    $("selfVideo").srcObject = null; $("selfMeta").textContent = "";
+    updateMediaButtons();
+  });
+
+  await room.connect(url, token);
+  mark("fe.room_connected");
+  updateMediaButtons();
+  $("status").textContent = `room ${roomName} — waiting for agent + avatar…`;
+  log(`connected to ${roomName} as ${identity}`);
+
+  if ($("mic").checked) {
+    await room.localParticipant.setMicrophoneEnabled(true);
+    mark("fe.mic_published", { mic: selectedLabel("mic") });
+    refreshMics(false); // labels become available once permission is granted
+  }
+  if ($("cam").checked) {
+    await room.localParticipant.setCameraEnabled(true);
+    mark("fe.camera_published", { camera: selectedLabel("cam") });
+    refreshCams(false);
+  }
+  syncSelfView();
+  updateMediaButtons();
+}
+
+async function stop() {
+  if (room) { await room.disconnect(); room = null; }
+  $("start").disabled = false; $("stop").disabled = true;
+  $("status").textContent = "idle";
+  $("selfVideo").srcObject = null; $("selfMeta").textContent = "";
+  updateMediaButtons();
+}
+
+function exportJson() {
+  const blob = new Blob([JSON.stringify({ ...run, firstMarked: undefined, settings: {
+    adaptiveStream: $("adaptive").checked, forceHigh: $("forceHigh").checked, videoWidth: $("vidWidth").value,
+  } }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `latency-${run.room || "run"}.json`;
+  a.click();
+}
+
+$("start").onclick = () => start().catch((e) => { log(`start failed: ${e}`); $("status").textContent = `error: ${e.message}`; $("start").disabled = false; });
+$("stop").onclick = stop;
+$("export").onclick = exportJson;
+run = newRun();
+render();
+// labels may be empty until permission is granted; use the "refresh" buttons to prompt
+refreshMics(false);
+refreshCams(false);
+</script>
+</body>
+</html>
