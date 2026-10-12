@@ -1,0 +1,213 @@
+name: Sync Subtrees
+
+on:
+  # Run on schedule (daily at 6 AM UTC)
+  schedule:
+    - cron: '0 6 * * *'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      single_directory:
+        description: 'Sync only a specific subtree directory (optional)'
+        required: false
+        type: string
+      force_sync:
+        description: 'Force sync even if there are uncommitted changes'
+        required: false
+        type: boolean
+        default: false
+
+  # Run when subtree config is modified
+  push:
+    paths:
+      - '.subtree/config.json'
+      - '.subtree/sync.sh'
+      - '.github/workflows/sync-subtrees.yml'
+
+jobs:
+  sync-subtrees:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history for subtree operations
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      
+      - name: Check for uncommitted changes
+        id: check_changes
+        run: |
+          if ! git diff-index --quiet HEAD --; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Uncommitted changes detected"
+            git status --porcelain
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "✅ Working directory is clean"
+          fi
+      
+      - name: Stop if uncommitted changes (unless forced)
+        if: steps.check_changes.outputs.has_changes == 'true' && github.event.inputs.force_sync != 'true'
+        run: |
+          echo "❌ Cannot sync subtrees with uncommitted changes."
+          echo "Either commit the changes first or use the 'force_sync' option."
+          exit 1
+      
+      - name: Sync subtrees
+        id: sync
+        run: |
+          # Set up variables
+          SYNC_ARGS=""
+          if [ -n "${{ github.event.inputs.single_directory }}" ]; then
+            SYNC_ARGS="--single ${{ github.event.inputs.single_directory }}"
+            echo "🎯 Syncing single directory: ${{ github.event.inputs.single_directory }}"
+          else
+            echo "🔄 Syncing all subtrees"
+          fi
+          
+          # Run the sync script
+          if ./.subtree/sync.sh $SYNC_ARGS; then
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "✅ Subtree sync completed successfully"
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "❌ Subtree sync failed"
+            exit 1
+          fi
+      
+      - name: Check for changes after sync
+        id: check_sync_changes
+        run: |
+          if ! git diff-index --quiet HEAD --; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "📝 Changes detected after sync"
+            
+            # Count changed files
+            changed_files=$(git diff --name-only HEAD | wc -l)
+            echo "changed_files=$changed_files" >> $GITHUB_OUTPUT
+            
+            # Get summary of changes
+            echo "## Changed Files" >> sync_summary.md
+            git diff --name-only HEAD | while read file; do
+              echo "- $file" >> sync_summary.md
+            done
+            
+            # Get commit summary
+            echo "" >> sync_summary.md
+            echo "## Sync Summary" >> sync_summary.md
+            echo "- **Files changed**: $changed_files" >> sync_summary.md
+            echo "- **Sync time**: $(date -u)" >> sync_summary.md
+            echo "- **Triggered by**: ${{ github.event_name }}" >> sync_summary.md
+            if [ -n "${{ github.event.inputs.single_directory }}" ]; then
+              echo "- **Target directory**: ${{ github.event.inputs.single_directory }}" >> sync_summary.md
+            fi
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No changes after sync - all subtrees are up to date"
+          fi
+      
+      - name: Create Pull Request
+        if: steps.check_sync_changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            chore: sync subtrees with upstream repositories
+            
+            - Synced ${{ steps.check_sync_changes.outputs.changed_files }} files
+            - Triggered by: ${{ github.event_name }}
+            ${{ github.event.inputs.single_directory && format('- Target: {0}', github.event.inputs.single_directory) || '' }}
+          title: "🔄 Sync subtrees with upstream repositories"
+          body-path: sync_summary.md
+          branch: sync-subtrees-${{ github.run_number }}
+          delete-branch: true
+          labels: |
+            automated
+            subtree-sync
+          reviewers: |
+            andy-tavus
+          draft: false
+      
+      - name: Auto-merge PR (if configured)
+        if: steps.check_sync_changes.outputs.has_changes == 'true' && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Wait a moment for PR to be created
+          sleep 5
+          
+          # Get the PR number
+          PR_NUMBER=$(gh pr list --head sync-subtrees-${{ github.run_number }} --json number --jq '.[0].number')
+          
+          if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+            echo "🤖 Auto-merging PR #$PR_NUMBER (scheduled sync)"
+            gh pr merge $PR_NUMBER --squash --auto
+          else
+            echo "⚠️ Could not find PR to auto-merge"
+          fi
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Subtree sync workflow failed!"
+          echo "Please check the logs and sync manually if needed."
+          echo "You can run: ./.subtree/sync.sh"
+
+  # Job to validate the configuration
+  validate-config:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.event.head_commit.modified, '.subtree/config.json')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      
+      - name: Validate subtree configuration
+        run: |
+          echo "🔍 Validating .subtree/config.json"
+          
+          # Check if file is valid JSON
+          if ! jq empty .subtree/config.json; then
+            echo "❌ Invalid JSON in .subtree/config.json"
+            exit 1
+          fi
+          
+          # Check required fields
+          if ! jq -e '.subtrees | length > 0' .subtree/config.json > /dev/null; then
+            echo "❌ No subtrees defined in configuration"
+            exit 1
+          fi
+          
+          # Validate each subtree entry
+          jq -c '.subtrees[]' .subtree/config.json | while read subtree; do
+            directory=$(echo "$subtree" | jq -r '.directory')
+            repository=$(echo "$subtree" | jq -r '.repository')
+            branch=$(echo "$subtree" | jq -r '.branch')
+            
+            if [ "$directory" = "null" ] || [ "$repository" = "null" ] || [ "$branch" = "null" ]; then
+              echo "❌ Missing required fields in subtree configuration: $subtree"
+              exit 1
+            fi
+            
+            echo "✅ Valid subtree config: $directory -> $repository ($branch)"
+          done
+          
+          echo "✅ Configuration validation passed"

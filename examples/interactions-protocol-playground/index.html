@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tavus Interactions Protocol Playground</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+  <style>
+    #video-container {
+      position: fixed;
+      width: 65%;
+      height: 44%;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid;
+      z-index: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+    }
+    #participant-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: black;
+    }
+    #box2, #box4 {
+      text-align: right;
+    }
+    #box2 button, #box4 button {
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+    <div class="centered-content">
+        <div class="centered-links">
+            <a href="https://docs.tavus.io/api-reference/interactions-protocol">docs</a> |
+            <a href="https://github.com/andy-tavus/interactions-protocol-playground/">source</a> |
+            <a href="https://github.com/andy-tavus/interactions-protocol-playground/blob/main/README.md">readme</a> |
+            <a href="https://github.com/andy-tavus/interactions-protocol-playground/blob/main/quickstart.md">quickstart</a>
+        </div>
+        <div><br>INTERACTIONS PROTOCOL Playground</div>
+        <div>powered by <a href="https://tavus.io">Tavus</a></div>
+    </div>
+
+    <div id="video-container">
+        <video id="participant-video" autoplay playsinline></video>
+    </div>
+  
+    <div id="conversation-input-box">
+       <div style="display: flex; align-items: center; justify-content: center;">
+            <input type="text" id="conversation-id" placeholder="Enter conversation_id" oninput="updateTextAreas()">
+            <button id="join-button" onclick="joinNewRoom()" style="margin-left: 2%; margin-top: 0px;">Join</button>
+            <button id="leave-button" onclick="leaveRoom()" style="margin-left: 1%; margin-top: 0px;" disabled>Leave</button>
+       </div>
+    </div>
+
+    <div id="log-toggle-container" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin: 5px 0;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="font-weight: bold; font-size: 14px;">All Events Log</div>
+            <a href="#" onclick="showLegend()" id="legend-link" style="color: #df44a6; text-decoration: none; font-size: 12px; padding: 3px 8px; border: 1px solid #df44a6; border-radius: 4px; background: rgba(223, 68, 166, 0.1); transition: all 0.2s ease;">(i) Legend</a>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <button onclick="exportLogToCSV()" style="padding: 4px 8px; font-size: 13px; margin: 0; vertical-align: middle; line-height: normal;">Export CSV</button>
+        </div>
+    </div>
+
+    <div id="box1" class="corner-box">
+        <textarea id="echo-box" style="width:100%; height:100%;">
+sendAppMessage({
+  "message_type": "conversation",
+  "event_type": "conversation.echo",
+  "conversation_id": "c123456",
+  "properties": {
+    "text": "This is the text the replica will speak.",
+    "modality": "speech"
+  }
+});
+        </textarea>
+        conversation.<button onclick="executeCode('echo-box')">echo</button>
+    </div>
+
+    <div id="box2" class="corner-box">
+        <textarea id="respond-box" style="width:100%; height:100%;">
+sendAppMessage({
+  "message_type": "conversation",
+  "event_type": "conversation.respond",
+  "conversation_id": "c123456",
+  "properties": {
+    "text": "This is text the replica will respond to, as if the user in the meeting spoke it."
+  }
+});
+        </textarea>
+        conversation.<button onclick="executeCode('respond-box')">respond</button>
+    </div>
+
+    <div id="box3" class="corner-box">
+        <textarea id="interrupt-box" style="width:100%; height:100%;">
+sendAppMessage({
+  "message_type": "conversation",
+  "event_type": "conversation.interrupt",
+  "conversation_id": "c123456"
+});
+        </textarea>
+        conversation.<button onclick="executeCode('interrupt-box')">interrupt</button>
+    </div>
+
+    <div id="box4" class="corner-box">
+        <div style="margin-bottom: 5px;">
+            <label>
+                <input type="radio" name="context-mode" value="overwrite" checked onchange="updateContextBox()"> Overwrite
+            </label>
+            <label style="margin-left: 15px;">
+                <input type="radio" name="context-mode" value="append" onchange="updateContextBox()"> Append
+            </label>
+        </div>
+        <textarea id="context-box" style="width:100%; height:calc(100% - 35px);">
+sendAppMessage({
+  "message_type": "conversation",
+  "event_type": "conversation.overwrite_llm_context",
+  "conversation_id": "c123456",
+  "properties": {
+    "context": "This text is the context that will be used to overwrite the existing conversational context."
+  }
+});
+        </textarea>
+        conversation.<button id="context-button" onclick="executeCode('context-box')">overwrite_llm_context</button>
+    </div>
+
+    <div id="utterance-log">
+        <div id="log-content"></div>
+    </div>
+
+    <!-- Legend Modal -->
+    <div id="legend-modal" onclick="hideLegend()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+        <div onclick="event.stopPropagation()" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e1e1e; border: 2px solid #df44a6; border-radius: 10px; padding: 20px; max-width: 500px; box-shadow: 0 0 20px #df44a6;">
+            <h3 style="color: #f1f1f1; margin-top: 0; text-align: center;">Event Log Legend</h3>
+            
+            <h4 style="color: #df44a6; margin-bottom: 10px;">Event Types:</h4>
+            <div style="color: #f1f1f1; font-size: 14px; line-height: 1.8;">
+                <div><span style="color: #7dd3fc; font-weight: bold;">U-Start:</span> User started speaking</div>
+                <div><span style="color: #7dd3fc; font-weight: bold;">U-Stop:</span> User stopped speaking</div>
+                <div><span style="color: #86efac; font-weight: bold;">R-Start:</span> Replica started speaking</div>
+                <div><span style="color: #86efac; font-weight: bold;">R-Stop:</span> Replica stopped speaking</div>
+                <div><span style="color: #a5b4fc; font-weight: bold;">Utterance:</span> Transcribed speech (user or replica)</div>
+                <div><span style="color: #fbbf24; font-weight: bold;">Echo:</span> Make replica speak specific text</div>
+                <div><span style="color: #f97316; font-weight: bold;">Respond:</span> Simulate user input for replica to respond</div>
+                <div><span style="color: #ef4444; font-weight: bold;">Interrupt:</span> Stop replica from speaking</div>
+                <div><span style="color: #d946ef; font-weight: bold;">Overwrite:</span> Replace conversational context</div>
+                <div><span style="color: #ec4899; font-weight: bold;">Append:</span> Add to conversational context</div>
+            </div>
+            
+            <h4 style="color: #df44a6; margin-bottom: 10px; margin-top: 20px;">Direction (F/T):</h4>
+            <div style="color: #f1f1f1; font-size: 14px; line-height: 1.6;">
+                <strong>F:</strong> From Tavus (events received from Tavus)<br>
+                <strong>T:</strong> To Tavus (events sent to Tavus)<br>
+            </div>
+            
+            <h4 style="color: #df44a6; margin-bottom: 10px; margin-top: 20px;">Colors:</h4>
+            <div style="color: #f1f1f1; font-size: 14px; line-height: 1.6;">
+                <strong>From Tavus (F):</strong> Cool colors (blues, greens, indigo)<br>
+                <strong>To Tavus (T):</strong> Warm colors (amber, orange, red, pink)<br>
+                <em>Note: U-Start/U-Stop share one color, R-Start/R-Stop share another</em>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="hideLegend()" style="background: #df44a6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
