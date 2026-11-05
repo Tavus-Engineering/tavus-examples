@@ -50,5 +50,4 @@ Reference, current and authoritative; this prompt is not a substitute for it:
 - Embed element, attributes, sizing, the expanding card: https://docs.tavus.io/sections/deployments/embed.md
 - Methods, events, interactions, tool calls and letting the PAL act on the page: https://docs.tavus.io/sections/deployments/host-communication.md
 - Full documentation index: https://docs.tavus.io/llms.txt
-- Before writing code with @tavus/embed, read node_modules/@tavus/embed/skills/tavus-embed/SKILL.md
 - Exact types of the installed version: `node_modules/@tavus/embed/dist/*.d.ts`
