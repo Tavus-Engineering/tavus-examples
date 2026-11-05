@@ -50,4 +50,5 @@ Reference, current and authoritative; this prompt is not a substitute for it:
 - Embed element, attributes, sizing, the expanding card: https://docs.tavus.io/sections/deployments/embed.md
 - Methods, events, interactions, tool calls and letting the PAL act on the page: https://docs.tavus.io/sections/deployments/host-communication.md
 - Full documentation index: https://docs.tavus.io/llms.txt
+- Agent skill of the installed version, right after `npm install`: `node_modules/@tavus/embed/skills/tavus-embed/SKILL.md` (install, framework setup, attributes, events, and how to check the element loaded). Read it before writing code. Versions before the skill shipped do not have the file.
 - Exact types of the installed version: `node_modules/@tavus/embed/dist/*.d.ts`
