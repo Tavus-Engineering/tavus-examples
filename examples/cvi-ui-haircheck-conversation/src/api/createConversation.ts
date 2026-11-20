@@ -9,7 +9,7 @@ export const createConversation = async (apiKey: string): Promise<IConversation>
         'x-api-key': apiKey,
       },
       body: JSON.stringify({
-        persona_id: 'p48fdf065d6b', // Stock Demo Persona
+        persona_id: 'p22f53b7b4b9', // Stock PAL (Sales Discovery Call)
       }),
     });
 

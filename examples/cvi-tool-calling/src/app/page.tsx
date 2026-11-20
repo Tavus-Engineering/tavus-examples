@@ -50,7 +50,7 @@ export default function Home() {
         const conversationalContext = formatShoppingItemsForContext(shoppingItems)
         
         await startConversation({
-          replica_id: process.env.TAVUS_REPLICA_ID || 'rf4703150052',
+          replica_id: process.env.TAVUS_REPLICA_ID || 'r8495a788aa1',
           persona_id: process.env.TAVUS_PERSONA_ID || '',
           conversational_context: conversationalContext,
           custom_greeting: "Hi I am tavus Shopping assistance, I can help you with your shopping needs."

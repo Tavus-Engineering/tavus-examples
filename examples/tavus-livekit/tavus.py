@@ -29,7 +29,7 @@ async def entrypoint(ctx: agents.JobContext):
     )
 
     avatar = tavus.AvatarSession(
-        replica_id="rf4703150052",
+        replica_id="r8495a788aa1",
         persona_id="p7fb2f122a0f",
     )
 
