@@ -15,7 +15,7 @@ export const createPersona = async (
     persona_name: "Interactive Assistant",
     system_prompt: "You are an AI assistant that can help users interact with the webpage. You can click elements when users request it.",
     context: "You have the ability to click elements on the page when users ask you to.",
-    default_replica_id: "r6e055828f63",
+    default_replica_id: "rc8992fe8e8e",
     layers: {
       llm: {
         model: "tavus-llama",

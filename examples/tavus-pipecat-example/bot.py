@@ -16,7 +16,7 @@ Run:
 
 Set in .env:
   TAVUS_DAILY_ROOM=https://tavus.daily.co/your-room
-  TAVUS_REPLICA_ID=rca8a38779a8
+  TAVUS_REPLICA_ID=r8495a788aa1
 """
 
 import asyncio
