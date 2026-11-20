@@ -20,13 +20,29 @@ This example demonstrates how to use the Tavus Conversational Video Interface (C
    npm install
    ```
 
-2. Start the development server:
+2. Copy `.env.example` to `.env` and set your Tavus API key:
+   ```
+   TAVUS_API_KEY=your_api_key_here
+   ```
+   > You can create an API key at https://platform.tavus.io/api-keys
+
+3. Start the development server:
    ```bash
    npm run dev
    ```
+   This starts the Vite app and the small API server in `server.js`. Vite forwards `/api` requests to it.
 
-3. Enter your Tavus API key when prompted in the app
-   > You can create an API key at https://platform.tavus.io/api-keys
+To run a production build: `npm run build && npm start`. `server.js` then serves the built app and the API on port 3001 (or `PORT`).
+
+## 🔐 Keeping your API key on the server
+
+Your Tavus API key must never reach the browser. Vite bundles every `VITE_*` variable into the client JavaScript, so anyone visiting the page could read the key.
+
+In this example:
+- `TAVUS_API_KEY` has no `VITE_` prefix and is read only by `server.js`.
+- The browser calls `/api/tavus` and `/api/persona` on its own backend. `server.js` calls `https://tavusapi.com` with the key and returns only the IDs and URL the page needs.
+
+When you deploy, set `TAVUS_API_KEY` in your server's environment, and add your own authentication to the `/api` routes before exposing them publicly.
 
 ## 📚 Learn More
 

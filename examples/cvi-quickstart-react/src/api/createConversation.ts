@@ -1,17 +1,14 @@
-import { TAVUS_API_KEY } from '@/config';
 import { IConversation } from '@/types';
 
+// Calls this app's own backend (server.js), which holds the Tavus API key.
+// Never call https://tavusapi.com from the browser: the key would ship in
+// the client bundle.
 export const createConversation = async (): Promise<IConversation> => {
   try {
-    const response = await fetch('https://tavusapi.com/v2/conversations', {
+    const response = await fetch('/api/tavus', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': TAVUS_API_KEY,
-      },
-      body: JSON.stringify({
-        persona_id: 'p9a95912', // Stock Demo Persona
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create' }),
     });
 
     if (!response.ok) {
