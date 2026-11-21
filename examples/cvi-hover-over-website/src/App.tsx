@@ -8,7 +8,7 @@ import {
   DailyAudio,
   useAppMessage,
 } from "@daily-co/daily-react";
-import { createConversation, endConversation, overwriteConversationContext, createPersona } from "./api";
+import { createConversation, endConversation, createPersona } from "./api";
 import type { IConversation } from "./types";
 
 /**
@@ -260,38 +260,6 @@ export const Video: React.FC<{ id: string }> = ({ id }) => {
           height: "100%",
         }}
       />
-    </div>
-  );
-};
-
-// Pulsing Orb Component for user's speech
-const PulsingOrb = ({ isActive }: { isActive: boolean }) => {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: "80px",
-        right: "20px",
-        width: "20px",
-        height: "20px",
-        borderRadius: "50%",
-        backgroundColor: "#4CAF50",
-        opacity: isActive ? 1 : 0.3,
-        transform: isActive ? "scale(1.2)" : "scale(1)",
-        transition: "all 0.2s ease-in-out",
-        animation: isActive ? "pulse 1.5s ease-in-out infinite" : "none",
-        zIndex: 30,
-      }}
-    >
-      <style>
-        {`
-          @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-          }
-        `}
-      </style>
     </div>
   );
 };
@@ -599,7 +567,7 @@ export const Call = ({ onLeave }: { onLeave: () => void }) => {
 /**
  * Main App component that manages the application state and UI
  * Handles:
- * - API token input and validation
+ * - Creating a persona and conversations through the app's backend (server.js)
  * - Starting/ending video calls
  * - Connection to Daily.co video service
  */
@@ -611,33 +579,14 @@ function App() {
   });
   const [url, setUrl] = useState("https://www.aerbits.ai");
   const DailyCall = useDaily();
-  const apiKey = import.meta.env.VITE_TAVUS_API_KEY;
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Function to create a new persona
   const handleCreatePersona = async () => {
-    if (!apiKey) return;
-    
     setLoading(true);
     try {
-      const persona = await createPersona(apiKey, {
-        persona_name: "Interactive Web Assistant",
-        system_prompt: "You are an AI assistant that helps users interact with webpages through screen sharing.",
-        context: "You can interpret screen shares to provide guidance and assistance.",
-        layers: {
-          llm: {
-            model: "tavus-gpt-4o"
-          },
-          perception: {
-            enabled: true,
-            screen_share: {
-              enabled: true,
-              interval_ms: 5000,
-              quality: "high"
-            }
-          }
-        }
-      });
+      // server.js holds the persona config and the Tavus API key.
+      const persona = await createPersona();
 
       setPersonaId(persona.persona_id);
       localStorage.setItem('lastPersonaId', persona.persona_id);
@@ -651,10 +600,10 @@ function App() {
 
   // Start a new video call session
   const handleStartCall = async () => {
-    if (apiKey && DailyCall) {
+    if (DailyCall) {
       setLoading(true);
       try {
-        const conversation = await createConversation(apiKey, personaId || undefined);
+        const conversation = await createConversation(personaId || undefined);
         setConversation(conversation);
         console.log('conversation', conversation);
         await DailyCall.join({ url: conversation.conversation_url });
@@ -668,8 +617,8 @@ function App() {
   // Clean up and end the current call
   const handleLeaveCall = () => {
     DailyCall?.leave();
-    if (conversation && apiKey) {
-      endConversation(conversation.conversation_id, apiKey);
+    if (conversation) {
+      endConversation(conversation.conversation_id);
     }
     setConversation(null);
   };
@@ -739,13 +688,7 @@ function App() {
         title="Background Content"
       />
       
-      {!apiKey && (
-        <div style={{ position: "absolute", top: "60px", left: "50%", transform: "translateX(-50%)", zIndex: 10, padding: "20px", backgroundColor: "rgba(255, 0, 0, 0.1)" }}>
-          <p>Error: Tavus API key not found. Please add VITE_TAVUS_API_KEY to your .env file.</p>
-        </div>
-      )}
-
-      {!conversation && !loading && apiKey && (
+      {!conversation && !loading && (
         <div style={{
           position: "absolute",
           top: "50%",

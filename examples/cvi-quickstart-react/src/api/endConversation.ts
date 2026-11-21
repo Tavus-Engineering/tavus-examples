@@ -1,16 +1,11 @@
-import { TAVUS_API_KEY } from '@/config';
-
+// Calls this app's own backend (server.js), which holds the Tavus API key.
 export const endConversation = async (conversationId: string) => {
   try {
-    const response = await fetch(
-      `https://tavusapi.com/v2/conversations/${conversationId}/end`,
-      {
-        method: 'POST',
-        headers: {
-          'x-api-key': TAVUS_API_KEY,
-        },
-      }
-    );
+    const response = await fetch('/api/tavus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'end', conversationId }),
+    });
 
     if (!response.ok) {
       throw new Error('Failed to end conversation');

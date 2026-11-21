@@ -10,4 +10,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    // Forward /api calls to the backend in server.js, which holds the Tavus API key.
+    proxy: {
+      "/api": "http://localhost:3001",
+    },
+  },
 })

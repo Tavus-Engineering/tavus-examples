@@ -1,22 +1,20 @@
 import type { IConversation } from "../types";
 
-export const createConversation = async (
-  token: string,
-  personaId?: string
-): Promise<IConversation> => {
-  console.log(personaId)
-  const response = await fetch("https://tavusapi.com/v2/conversations", {
+// Calls this app's own backend (server.js), which holds the Tavus API key.
+// Never call https://tavusapi.com from the browser: the key would ship in
+// the client bundle.
+export const createConversation = async (personaId?: string): Promise<IConversation> => {
+  const response = await fetch("/api/tavus", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": token,
-    },
-    body: JSON.stringify(personaId ? { persona_id: personaId, properties: { apply_greenscreen: true } } : {}),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "create",
+      params: personaId ? { persona_id: personaId } : {},
+    }),
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to create conversation: ${response.statusText}`);
-    console.log(response)
+    throw new Error(`Failed to create conversation: ${await response.text()}`);
   }
 
   return response.json();
